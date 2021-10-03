@@ -1,0 +1,4 @@
+*.pyc
+*.min.*
+*.json
+venv*
