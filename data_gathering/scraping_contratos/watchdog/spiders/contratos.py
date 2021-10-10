@@ -1,6 +1,6 @@
 from collections import defaultdict
 from pathlib import Path
-from urllib.parse import urlparse, parse_qs
+from urllib.parse import urlparse, urlencode, parse_qsl
 
 import json
 import scrapy
@@ -15,7 +15,7 @@ class Contratos(scrapy.Spider):
         # Contratos sin publicidad
         "https://www.madrid.org/cs/Satellite?c=Page&cid=1109178416227&definicion=Contratos+Publicos&idPagina=1205761917548&language=es&op=Contratos+adjudicados+por+procedimientos+sin+publicidad&pagename=PortalContratacion%2FPage%2FPCON_contratosPublicos&tipoServicio=CM_ConvocaPrestac_FA",
         # Tablon de contratos
-        "https://www.madrid.org/cs/Satellite?c=Page&cid=1109178416227&definicion=Contratos+Publicos&idPagina=1203334374496&language=es&op=Tabl%C3%B3n+de+anuncio+electr%C3%B3nico&pagename=PortalContratacion%2FPage%2FPCON_contratosPublicos&tipoServicio=CM_ConvocaPrestac_FA"
+        # "https://www.madrid.org/cs/Satellite?c=Page&cid=1109178416227&definicion=Contratos+Publicos&idPagina=1203334374496&language=es&op=Tabl%C3%B3n+de+anuncio+electr%C3%B3nico&pagename=PortalContratacion%2FPage%2FPCON_contratosPublicos&tipoServicio=CM_ConvocaPrestac_FA"
     ]
 
     def start_requests(self):
@@ -40,6 +40,7 @@ class Contratos(scrapy.Spider):
         '''
         # Si no hay contrataciones, existe un elemento HTML con el id="noHay"
         noHay = response.css("#noHay").extract_first()
+
         if not noHay:
             # Los contratos aparecen en divs con la clase "cajaBlanca"
             contracts = response.css(".cajaBlanca")
@@ -47,7 +48,14 @@ class Contratos(scrapy.Spider):
                 url = contract.css(".txt07azu").xpath('@href').extract_first()
                 yield response.follow(url, self.contract_scrapping)
 
-        # TODO Itera por las páginas de la categoría
+            if len(contracts) > 0:
+                # Itera a la siguiente página
+                parse = urlparse(response.url)
+                params = dict(parse_qsl(parse.query))
+                params['paginaActual'] = 2 if not 'paginaActual' in params else int(params['paginaActual'])+1
+                siguientePagina = f"{parse.path}?{urlencode(params)}"
+
+                yield response.follow(siguientePagina, self.navigate_contract_category)
 
     def contract_scrapping(self, response):
         ''' Scrappea la información presente en la página del contrato
@@ -71,9 +79,12 @@ class Contratos(scrapy.Spider):
                 contract_details[name_formatted] = content
 
         # https://stackoverflow.com/questions/295135/turn-a-string-into-a-valid-filename
-        params = parse_qs(urlparse(response.url).query)
-        output_filename = params['cid'][0]
+        params = dict(parse_qsl(urlparse(response.url).query))
+        output_filename = params['cid']
 
-        with open(f"contracts/{output_filename}.json", "w+") as fd:
+        # Crea la carpeta de la categoría si no existe
+        Path(f"contracts/{contract_details['tipo-de-contrato']}").mkdir(exist_ok=True)
+
+        with open(f"contracts/{contract_details['tipo-de-contrato']}/{output_filename}.json", "w+") as fd:
             fd.write(json.dumps(contract_details))
             fd.close()
