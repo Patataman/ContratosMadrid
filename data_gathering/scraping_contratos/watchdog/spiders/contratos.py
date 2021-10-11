@@ -15,7 +15,7 @@ class Contratos(scrapy.Spider):
         # Contratos sin publicidad
         "https://www.madrid.org/cs/Satellite?c=Page&cid=1109178416227&definicion=Contratos+Publicos&idPagina=1205761917548&language=es&op=Contratos+adjudicados+por+procedimientos+sin+publicidad&pagename=PortalContratacion%2FPage%2FPCON_contratosPublicos&tipoServicio=CM_ConvocaPrestac_FA",
         # Tablon de contratos
-        "https://www.madrid.org/cs/Satellite?c=Page&cid=1109178416227&definicion=Contratos+Publicos&idPagina=1203334374496&language=es&op=Tabl%C3%B3n+de+anuncio+electr%C3%B3nico&pagename=PortalContratacion%2FPage%2FPCON_contratosPublicos&tipoServicio=CM_ConvocaPrestac_FA"
+        "https://www.madrid.org/cs/Satellite?c=Page&cid=1109178416227&definicion=Contratos+Publicos&idPagina=1203334374496&language=es&op=Tabl%C3%B3n+de+anuncio+electr%C3%B3nico&pagename=PortalContratacion%2FPage%2FPCON_contratosPublicos&tipoServicio=CM_ConvocaPrestac_FA",
     ]
 
     def start_requests(self):
@@ -71,7 +71,16 @@ class Contratos(scrapy.Spider):
         for field in information:
             # Cuando el contrato ya ha sido adjudicado, información sobre la adjudicación
             if field.css(".tableAdjudicacion"):
-                pass
+                columnas = field.css(".tableAdjudicacion thead tr th[colspan='1'] span")
+                valores = field.css(".tableAdjudicacion tbody tr td")
+                adjudicacion = {}
+                for col, val in zip(columnas, valores):
+                    col_nombre = col.xpath("text()").extract_first().strip()
+                    col_nombre = col_nombre.lower().replace("º", "-")
+                    col_val = val.xpath("text()").extract_first()
+                    if col_val:
+                        col_val = col_val.strip()
+                    adjudicacion[col_nombre] = col_val
             else:
                 name = field.css("strong").xpath("text()").extract_first().strip()
                 name_formatted = name.lower().replace(" ", "-").replace("á", "a").replace("é", "e").replace("í", "i").replace("ú", "u").replace("ó", "o").replace("ñ", "n")
@@ -81,6 +90,9 @@ class Contratos(scrapy.Spider):
         # https://stackoverflow.com/questions/295135/turn-a-string-into-a-valid-filename
         params = dict(parse_qsl(urlparse(response.url).query))
         output_filename = params['cid']
+        if Path(f"contracts/{contract_details['tipo-de-contrato']}/{output_filename}.json").exists():
+            # No sobreescribas si ya existe
+            return
 
         # Crea la carpeta de la categoría si no existe
         Path(f"contracts/{contract_details['tipo-de-contrato']}").mkdir(exist_ok=True)
