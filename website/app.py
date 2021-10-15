@@ -1,8 +1,9 @@
 from flask import Flask, request, flash, redirect, url_for, session
+from flask_assets import Environment, Bundle
 from flask_sqlalchemy import SQLAlchemy
 from logging.config import dictConfig
 
-from src.models import db, User, Role
+from src.models import db
 from src.views.main import main_module
 
 
@@ -15,6 +16,10 @@ app.static_url_path='/src/static'
 app.static_folder=app.root_path + app.static_url_path
 
 app.register_blueprint(main_module, url_prefix='')
+
+# Compilation & minification of .scss files
+# and minification of .js files it is done in the view
+assets = Environment(app)
 
 # db.app = app
 # db.init_app(app)
@@ -46,5 +51,5 @@ dictConfig({
 @app.errorhandler(404)
 def page_not_found(e):
     session.pop('_flashes', None)
-    flash(gettext("Unknown path"), "warning")
+    flash("Unknown path", "warning")
     return redirect("/")

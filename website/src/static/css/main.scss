@@ -1,0 +1,38 @@
+@option style:compressed;
+@import "variables.scss";
+
+* {
+    margin: 0;
+    padding: 0;
+    font-family: $font-family-base;
+}
+
+b { font-weight: bold; }
+
+.no-style, .no-style:hover, .no-style:active, .no-style:focus {
+    text-decoration: none;
+    color: inherit;
+    box-shadow: none;
+    border: none;
+    background: none;
+}
+
+.fa {
+    cursor:pointer; color:$dark;
+    &.fa-pulse { animation-duration: 2s !important; }
+}
+.close-flash { cursor:pointer; }
+
+main {
+    .flash {
+        min-height: 6vh;
+        display: flex;
+        align-items: center;
+
+        ul { list-style: disclosure-closed; }
+
+        &.error { background-color: $red-error; }
+        &.warning { background-color: $yellow-warning; }
+        &.info { background-color: $green-secundary; }
+    }
+}

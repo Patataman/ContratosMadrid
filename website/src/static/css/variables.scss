@@ -1,0 +1,31 @@
+@option style:compressed;
+
+$green-primary: #94d9ac;
+$green-secundary: #3cc196;
+$green-dark: #74c88d;
+$gold: #ead57c;
+$purple: rgba(164, 118, 195, 0.38);
+$grey-light: #e6e6e6;
+$grey-dark: #bfbfbf;
+$dark: #333333;
+$fake-white: #fafafa;
+$red-error: #FA7268;
+$yellow-warning: #FFE451;
+$blue-primary: #75f4c7;
+$link-color: #3cc196;
+
+$fonts-path: "fonts";
+
+@font-face {
+    font-family: "maven_pro_light300";
+    src: url("#{$fonts-path}/maven-pro-light/mavenprolight-300-webfont.eot");
+    src: url("#{$fonts-path}/maven-pro-light/mavenprolight-300-webfont.eot?#iefix") format("embedded-opentype"),
+    url("#{$fonts-path}/maven-pro-light/mavenprolight-300-webfont.woff") format("woff"),
+    url("#{$fonts-path}/maven-pro-light/mavenprolight-300-webfont.ttf") format("truetype"),
+    url("#{$fonts-path}/maven-pro-light/mavenprolight-300-webfont.svg#maven_pro_light300") format("svg");
+    font-weight: normal;
+    font-style: normal;
+}
+
+$font-family-base: "maven_pro_light300", sans-serif;
+

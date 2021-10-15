@@ -1,0 +1,46 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Contrataciones Madrid {% block title %}{% endblock %}</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/css/bootstrap-select.min.css">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+        {% assets filters="pyscss", output="css/all.min.css", "css/main.scss" %}
+        <link rel=stylesheet type=text/css href="{{ url_for('static', filename='css/all.min.css') }}">
+        {% endassets %}
+        <link rel="icon" type="image/png" sizes="64x64" href="{{ url_for('static', filename='images/favicon.png') }}">
+        <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+        <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+        {% block extrahead %}{% endblock %}
+    </head>
+    <body>
+        <nav>
+        </nav>
+        <main>
+            {% for type in ['error', 'warning', 'info'] %}
+              {% with messages = get_flashed_messages(category_filter=[type]) %}
+                {% if messages %}
+                <div class="col-12 pl-5 flash {{ type }}">
+                      <ul class="m-0 col-12 p-0">
+                      {% for msg in messages %}
+                      <li>{{ msg }}<i class="float-right close-flash fa fa-times mt-1"></i></li>
+                      {% endfor %}
+                      </ul>
+                  </div>
+                {% endif %}
+              {% endwith %}
+            {% endfor %}
+            <div id="content" class="">
+              {% block content %}
+              {% endblock %}
+            </div>
+        </main>
+        <footer class="col-12">{% block footer %}{% endblock %}</footer>
+        {% assets filters="jsmin", output="js/main.min.js", "js/main.js" %}
+            <script type="text/javascript" src="{{ ASSET_URL }}"></script>
+        {% endassets %}
+        {% block js_scripts %} {% endblock %}
+    </body>
+</html>
