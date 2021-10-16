@@ -49,7 +49,7 @@ with open('autonomicas_madrid_2007.txt') as f:
             print(line)
             count += 1
             continue
-            
+        
         if (line == "Suplentes\n"):
             mode = 1
             count += 1
@@ -57,12 +57,20 @@ with open('autonomicas_madrid_2007.txt') as f:
         
         if (mode == 0):
             candidato = re.sub(r'[0-9]+', '', line)
-            candidato = candidato[2:].rstrip("\n")[:-1]
-            candidatos.append(candidato)
+            candidato = candidato[2:].rstrip("\n")
+            if (candidato != ""):
+                if (candidato[-1] == "."):
+                    candidato = candidato[:-1]
+                
+                candidatos.append(candidato)
         else:
             suplente = re.sub(r'[0-9]+', '', line)
-            suplente = suplente[2:].rstrip("\n")[:-1]
-            suplentes.append(suplente)
+            suplente = suplente[2:].rstrip("\n")
+            if (suplente != ""):
+                if (suplente[-1] == "."):
+                    suplente = suplente[:-1]
+                
+                suplentes.append(suplente)
         
         count += 1
         #print(f'line {count}: {line}')
