@@ -18,7 +18,7 @@ b { font-weight: bold; }
 }
 
 .fa {
-    cursor:pointer; color:$dark;
+    cursor:pointer;
     &.fa-pulse { animation-duration: 2s !important; }
 }
 .close-flash { cursor:pointer; }
@@ -64,5 +64,11 @@ main {
         &.error { background-color: $red-error; }
         &.warning { background-color: $yellow-warning; }
         &.info { background-color: $color-secundary; }
+    }
+
+    .list-group-flush .list-group-item { border-top: 0; }
+
+    #search-form {
+        input, i { font-size: 1.25em; }
     }
 }

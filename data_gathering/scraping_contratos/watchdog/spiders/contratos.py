@@ -81,6 +81,7 @@ class Contratos(scrapy.Spider):
                     if col_val:
                         col_val = col_val.strip()
                     adjudicacion[col_nombre] = col_val
+                contract_details['adjudicacion'] = adjudicacion
             else:
                 name = field.css("strong").xpath("text()").extract_first().strip()
                 name_formatted = name.lower().replace(" ", "-").replace("á", "a").replace("é", "e").replace("í", "i").replace("ú", "u").replace("ó", "o").replace("ñ", "n")
