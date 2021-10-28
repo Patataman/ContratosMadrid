@@ -1,0 +1,109 @@
+<!-- Button trigger modal -->
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#contratoModal">
+    Launch demo modal
+</button>
+
+<!-- Modal -->
+<div class="modal fade" id="contratoModal" tabindex="-1" aria-labelledby="contratoModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Nombre contrato</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">   
+            <div class="row">
+                <div class="col-sm-8">
+                    <h5>Información del contrato:</h5>
+                    <table class="table table-striped">
+                        <tbody>
+                            <tr>
+                                <th scope="row">Título:</th>
+                                <td>json.titulo</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Estado:</th>
+                                <td>json.status</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Tipo de publicación:</th>
+                                <td>json.tipo-publicacion</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Objeto del contrato:</th>
+                                <td>json.objeto-del-contrato</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Código CPV:</th>
+                                <td>json.codigo-cpv</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Nº expediente:</th>
+                                <td>json.numero-de-expediente</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Referencia:</th>
+                                <td>json.referencia</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Tipo de contrato:</th>
+                                <td>json.tipo-de-contrato</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Entidad adjudicadora:</th>
+                                <td>json.entidad-adjudicadora</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Código NUTS:</th>
+                                <td>json.status</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Procedimiento adjudicación:</th>
+                                <td>json.procedimiento-adjudicacion</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Presupuesto base:</th>
+                                <td>json.presupuesto-base-licitacion-(sin-impuestos)</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Duración:</th>
+                                <td>json.duracion-del-contrato</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Fecha:</th>
+                                <td>json.alguna-fecha</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">URL:</th>
+                                <td>json.url</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="col-sm-4">
+                    <h5>Datos cruzados:</h5>
+                    <div class="list-group">
+                        <a href="#" class="list-group-item list-group-item-action" aria-current="true">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h5 class="mb-1">Correspondencia con listas electorales</h5>
+                            </div>
+                            <p class="mb-1">personas-lista-electoral</p>
+                            <small class="text-muted">Aviso: las personas aquí mencionadas solo coinciden por nombre, podría no tratarse de la misma persona.</small>
+                        </a>
+                        <a href="#" class="list-group-item list-group-item-action">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h5 class="mb-1">Correspondencia datos fiscales off-shore</h5>
+                            </div>
+                            <p class="mb-1">empresas-off-shore</p>
+                            <small class="text-muted">Aviso: estas empresas o personas aparecen en documentos filtrados de paraísos fiscales</small>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        </div>
+        </div>
+    </div>
+</div>
