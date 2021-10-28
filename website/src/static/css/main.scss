@@ -24,7 +24,7 @@ b { font-weight: bold; }
 .close-flash { cursor:pointer; }
 
 nav {
-    color: $dark;
+    color: $color-secundary;
     position: fixed;
     top: 0;
     right: 0;
@@ -42,16 +42,17 @@ nav {
         justify-content: space-between;
 
         #banner-left {
-            img { object-fit: scale-down; }
+            img { object-fit: scale-down; height:6vh; }
             margin-left: 20px;
+            font-size: 1.05em;
         }
     }
 }
 
 
 main {
-
-    margin: 6vh 0vh;
+    margin: 6vh 0vh 0vh;
+    background: $fake-white;
 
     .flash {
         min-height: 6vh;
@@ -64,6 +65,4 @@ main {
         &.warning { background-color: $yellow-warning; }
         &.info { background-color: $color-secundary; }
     }
-
-    background: $fake-white;
 }

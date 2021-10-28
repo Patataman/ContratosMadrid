@@ -19,16 +19,17 @@
         <nav>
             <div id="banner">
                 <div id="banner-left">
-                    <a class="no-style" href="/">
+                    <a class="no-style d-flex align-items-center" href="/">
                     <div>
                         <img src="{{ url_for('static', filename='image/logo.png') }}" alt="Bandera CAM">
                     </div>
+                    <p class="m-0">Contrataciones Madrid</p>
                     </a>
                 </div>
                 {% block header %}{% endblock %}
             </div>
         </nav>
-        <main>
+        <main class="our-height-1">
             {% for type in ['error', 'warning', 'info'] %}
               {% with messages = get_flashed_messages(category_filter=[type]) %}
                 {% if messages %}
@@ -42,7 +43,7 @@
                 {% endif %}
               {% endwith %}
             {% endfor %}
-            <div id="content" class="">
+            <div id="content" class="p-2">
               {% block content %}
               {% endblock %}
             </div>
