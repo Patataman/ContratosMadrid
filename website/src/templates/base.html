@@ -9,7 +9,7 @@
         {% assets filters="pyscss", output="css/all.min.css", "css/main.scss" %}
         <link rel=stylesheet type=text/css href="{{ url_for('static', filename='css/all.min.css') }}">
         {% endassets %}
-        <link rel="icon" type="image/png" sizes="64x64" href="{{ url_for('static', filename='images/favicon.png') }}">
+        <link rel="icon" type="image/png" sizes="64x64" href="{{ url_for('static', filename='image/favicon.png') }}">
         <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
         <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
@@ -17,6 +17,16 @@
     </head>
     <body>
         <nav>
+            <div id="banner">
+                <div id="banner-left">
+                    <a class="no-style" href="/">
+                    <div>
+                        <img src="{{ url_for('static', filename='image/logo.png') }}" alt="Bandera CAM">
+                    </div>
+                    </a>
+                </div>
+                {% block header %}{% endblock %}
+            </div>
         </nav>
         <main>
             {% for type in ['error', 'warning', 'info'] %}
