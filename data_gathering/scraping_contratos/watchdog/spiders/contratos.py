@@ -95,7 +95,7 @@ class Contratos(scrapy.Spider):
             return
 
         # Crea la carpeta de la categoría si no existe
-        Path(f"contracts/{contract_details['tipo-de-contrato']}").mkdir(exist_ok=True)
+        Path(f"contracts/{contract_details['tipo-de-contrato']}").mkdir(exist_ok=True,parents=True)
 
         with open(f"contracts/{contract_details['tipo-de-contrato']}/{output_filename}.json", "w+") as fd:
             fd.write(json.dumps(contract_details))
