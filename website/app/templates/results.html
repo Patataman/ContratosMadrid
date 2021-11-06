@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block title %}
+ | Resultados
+{% endblock %}
+
+{% block content %}
+    {# Buscador #}
+    {% include 'utils/search_bar.html' with context %}
+
+    <section class="col-12">
+        <div class="col-12 mb-2">
+            <span>Contratos encontrados: </span>
+            <span>Tiempo total: </span>
+        </div>
+        <div class="col-12">
+          {% for contrato in contratos[:20] %}
+            <div data-bs-toggle="modal" data-bs-target="#contratoModal{{ contrato.id }}">
+                <span class="col-12"> Nombre del Contrato </span>
+                <span class="col-6"> Estado: </span>
+                <span class="col-6"> Tipo: </span>
+            </div>
+            {% include 'utils/modal_contratos.html' with context %}
+          {% endfor %}
+        </div>
+    </section>
+{% endblock %}
+

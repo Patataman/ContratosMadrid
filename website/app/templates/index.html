@@ -46,18 +46,18 @@
         </div>
     </section>
 
+    {# Espacio en blanco porque la clase de margin es muy poco #}
+    <div class="our-height-4"></div>
+
     {# Sección mapa #}
     <section class="our-height-1">
-        <div class="row h-100">
-            <div class="col-8">
-                <div id="map"></div>
-            </div>
-            <div class="col-4">
-                Twitter
-            </div>
+        <div class="our-height-1 row h-100 col-8">
+            <div id="map"></div>
         </div>
+        {# Sección twitter feed #}
+        <aside class="col-4">
+            Twitter
+        </aside>
     </section>
-    
-    {% include 'utils/modal_contratos.html' %}
 {% endblock %}
 

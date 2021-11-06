@@ -46,7 +46,7 @@ $(document).ready(function() {
     var heatmap = new google.maps.visualization.HeatmapLayer({
         data: heatmapData
     });
-    heatmap.setMap(map); 
-    
+    heatmap.setMap(map);
+
     $('.close-flash').on('click', close_flash_messages);
 });

@@ -1,0 +1,2 @@
+SECRET_KEY=""  # 'import secrets; secrets.token_urlsafe(32);'
+GOOGLE_API=""
