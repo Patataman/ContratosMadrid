@@ -9,16 +9,27 @@
     {% include 'utils/search_bar.html' with context %}
 
     <section class="col-12">
-        <div class="col-12 mb-2">
-            <span>Contratos encontrados: </span>
-            <span>Tiempo total: </span>
+        <div class="col-12 mb-4 p-4 row border-bottom">
+            <div class="col-3 offset-3">Contratos encontrados: </div>
+            <div class="col-3">Tiempo total: </div>
         </div>
-        <div class="col-12">
+        <div class="col-8 offset-2 mt-2">
           {% for contrato in contratos[:20] %}
-            <div data-bs-toggle="modal" data-bs-target="#contratoModal{{ contrato.id }}">
-                <span class="col-12"> Nombre del Contrato </span>
-                <span class="col-6"> Estado: </span>
-                <span class="col-6"> Tipo: </span>
+            <div class="card border-dark mb-3" data-bs-toggle="modal" data-bs-target="#contratoModal{{ contrato.id }}">
+                <div class="card-body text-dark row pointer">
+                    <div class="col-12 text-truncate">
+                        <label>Nombre del Contrato: </label>
+                        {{ contrato.name }}
+                    </div>
+                    <div class="col-6">
+                        <label>Estado:</label>
+                        {{ contrato.estado }}
+                    </div>
+                    <div class="col-6">
+                        <label>Tipo:</label>
+                        {{ contrato.tipo }}
+                    </div>
+                </div>
             </div>
             {% include 'utils/modal_contratos.html' with context %}
           {% endfor %}

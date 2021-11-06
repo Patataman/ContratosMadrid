@@ -21,7 +21,7 @@ b { font-weight: bold; }
     cursor:pointer;
     &.fa-pulse { animation-duration: 2s !important; }
 }
-.close-flash { cursor:pointer; }
+.close-flash, .pointer { cursor:pointer; }
 
 nav {
     color: $color-secundary;
@@ -67,10 +67,6 @@ main {
     }
 
     .list-group-flush .list-group-item { border-top: 0; }
-
-    #search-form {
-        input, i { font-size: 1.25em; }
-    }
 }
 
 #map {
