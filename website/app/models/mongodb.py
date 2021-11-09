@@ -3,8 +3,8 @@ import json
 
 from pymongo import MongoClient
 
-CONTRACTS_PATH = "data/contracts"
-ELECTORAL_LISTS_PATH = "data"
+CONTRACTS_PATH = "app/models/data/contracts"
+ELECTORAL_LISTS_PATH = "app/models/data"
 CONTRACT_COLLECTION = "contracts"
 ELECTORAL_LISTS_COLLECTION = "electoral_list"
 DATA_BASE_ID = "dme"
