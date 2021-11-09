@@ -5,6 +5,7 @@ from flask import (
 
 import json
 
+
 main_module = Blueprint('main', __name__, template_folder='../templates')
 
 

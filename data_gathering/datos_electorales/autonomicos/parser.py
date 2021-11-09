@@ -106,7 +106,8 @@ for txt in files:
             "suplentes": suplentes
         }
         listCandidaturas.append(candidatura)
-print(listCandidaturas)
+
+# print(listCandidaturas) Es muy feo pintar tanto por pantalla
 with open(f"candidaturas.json", "w+") as fd:
     fd.write(json.dumps(listCandidaturas))
     fd.close()

@@ -1,8 +1,8 @@
 from flask import Flask, request, flash, redirect, url_for, session
 from flask_assets import Environment, Bundle
-from flask_sqlalchemy import SQLAlchemy
 from logging.config import dictConfig
 
+from app.models.mongodb import MongoDB
 from app.views.main import main_module
 
 
@@ -13,6 +13,8 @@ jinja_env.add_extension("jinja2.ext.do")
 app.config.from_pyfile('config/config.cfg')
 app.static_url_path='/static'
 app.static_folder=app.root_path + app.static_url_path
+
+app.mongo = MongoDB()  # En las vistas hacer app.mongo para acceder
 
 app.register_blueprint(main_module, url_prefix='')
 
