@@ -50,7 +50,7 @@ class MongoDB:
         return list(self.database[CONTRACT_COLLECTION].find({}))
 
     def get_contracts_by_title(self, title):
-        return list(self.database[CONTRACT_COLLECTION].find({'titulo': {'$regex': ".*" + title + ".*"}}))
+        return list(self.database[CONTRACT_COLLECTION].find({'titulo': {'$regex': ".*" + title + ".*",'$options': 'i'}}))
 
     def get_contract_by_id(self, id):
         return self.database[CONTRACT_COLLECTION].find_one({'_id': id})

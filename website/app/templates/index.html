@@ -1,16 +1,22 @@
 {% extends 'base.html' %}
 
+{% block extrahead %}
+    <script src="https://maps.googleapis.com/maps/api/js?key={{ config.GOOGLE_API }}&libraries=visualization&callback=initMap"></script>
+{% endblock %}
+
 {% block title %}
  | Inicio
 {% endblock %}
 
 {% block content %}
     {# Buscador #}
-    {% include 'utils/search_bar.html' %}
+    <section class="our-height-3 col-12 d-flex align-items-center justify-content-center">
+        {% include 'utils/search_bar.html' %}
+    </section>
 
     {# Resumen datos #}
     <section class="our-height-3 row col-10 offset-1 justify-content-center">
-        <div class="card col-2 offset-1 border-dark">
+        <div class="card col-2 border-dark">
             <div class="card-body d-flex flex-column">
                 <h4 class="card-title flex-grow-1">Contratos totales </h4>
                 <h4 class="card-text">{{ numero_contratos }}</h4>
@@ -55,5 +61,11 @@
             Twitter
         </aside>
     </section>
+{% endblock %}
+
+{% block js_scripts %}
+    {% assets filters="jsmin", output="js/index.min.js", "js/index.js" %}
+        <script type="text/javascript" src="{{ ASSET_URL }}"></script>
+    {% endassets %}
 {% endblock %}
 

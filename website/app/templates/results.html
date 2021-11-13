@@ -6,27 +6,29 @@
 
 {% block content %}
     {# Buscador #}
-    {% include 'utils/search_bar.html' with context %}
+    <section class="our-height-4 col-12 d-flex align-items-center justify-content-center">
+        {% include 'utils/search_bar.html' with context %}
+    </section>
 
     <section class="col-12">
         <div class="col-12 mb-4 p-4 row border-bottom">
-            <div class="col-3 offset-3">Contratos encontrados: </div>
-            <div class="col-3">Tiempo total: </div>
+            <div class="col-3 offset-3">Contratos encontrados: {{ contratos|length }}</div>
+            <div class="col-3">Tiempo total: {{ tiempo|round(2) }}s</div>
         </div>
-        <div class="col-8 offset-2 mt-2">
+        <div class="col-6 offset-3 mt-2">
           {% for contrato in contratos[:20] %}
-            <div class="card border-dark mb-3" data-bs-toggle="modal" data-bs-target="#contratoModal{{ contrato.id }}">
-                <div class="card-body text-dark row pointer">
+            <div class="card border-dark mb-3 p-4 pointer" data-bs-toggle="modal" data-bs-target="#contratoModal{{ contrato.id }}">
+                <div class="card-body text-dark row">
                     <div class="col-12 text-truncate">
-                        <label>Nombre del Contrato: </label>
+                        <label><b>Nombre del Contrato: </b></label>
                         {{ contrato.titulo }}
                     </div>
                     <div class="col-6">
-                        <label>Estado:</label>
+                        <label><b>Estado:</b></label>
                         {{ contrato.status }}
                     </div>
                     <div class="col-6">
-                        <label>Tipo:</label>
+                        <label><b>Tipo:</b></label>
                         {{ contrato.categoria }}
                     </div>
                 </div>

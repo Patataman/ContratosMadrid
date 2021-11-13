@@ -2,8 +2,9 @@ from flask import (
     Blueprint, flash, render_template, make_response, session,
     request, current_app as app, url_for, abort, redirect
 )
-import locale
 
+import locale
+import time
 import json
 
 main_module = Blueprint('main', __name__, template_folder='../templates')
@@ -30,7 +31,7 @@ def results():
         REFERENCIA DE QUÉ NECESITO EN EL FRONT: https://github.com/Patataman/DMyE1/issues/10
     """
     busqueda = request.form['busqueda']
-    print(busqueda)
+    t0 = time.time()
     search = app.mongo.get_contracts_by_title(busqueda)
-    print(search)
-    return render_template('results.html', busqueda=busqueda, contratos=search)
+    tiempo = time.time() - t0
+    return render_template('results.html', busqueda=busqueda, contratos=search, tiempo=tiempo)
