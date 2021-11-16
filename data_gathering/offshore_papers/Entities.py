@@ -8,7 +8,7 @@ def print_entities(tx, country):
         header = ['name']
         writer = csv.writer(f)
         writer.writerow(header)
-        for record in tx.run("MATCH (n:Entity) WHERE n.country_codes CONTAINS $country RETURN n.name", country = country):
+        for record in tx.run("MATCH (n:Entity) WHERE n.country_codes CONTAINS $country RETURN DISTINCT toLower(n.name)", country = country):
             writer.writerow(record.values())
     f.close()
 
