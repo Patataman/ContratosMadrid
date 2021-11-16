@@ -55,6 +55,10 @@ def query():
 
 #LIBREBOR HANDLERS
 
+#SANDBOX: Si True utiliza la sandbox de LIBREBOR para no consumir consultas (usar con ITERATE = False)
+#ITERATE: Si True utiliza el método recursivo para obtener también empresas constituidas por la original
+#VERBOSE: Si True devuelve también los elementos que no aparecen en la BBDD (Para listar todos los miembros de una empresa usar con ITERATE = False)
+
 SANDBOX = True
 ITERATE = False
 VERBOSE = False
