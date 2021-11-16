@@ -1,5 +1,6 @@
 import os
 import json
+import re
 
 from pymongo import MongoClient
 
@@ -22,6 +23,8 @@ def contract_file_to_json(file_path, file_name):
     file.close()
     return json_file
 
+def query_format(str):
+    return re.sub('[aAáÁ]', '[aAáÁ]', re.sub('[eEéÉ]', '[eEéÉ]', re.sub('[iIíÍ]', '[iIíÍ]', re.sub('[oOóÓ]', '[oOóÓ]', re.sub('[uUúüÚÜ]', '[uUúüÚÜ]', re.sub('[nNñÑ]', '[nNñÑ]', re.sub(' +', '.*', str)))))))
 
 class MongoDB:
     def __init__(self):
@@ -78,3 +81,6 @@ class MongoDB:
 
     def get_all_electoral_lists(self):
         return list(self.database[ELECTORAL_LISTS_COLLECTION].find({}))
+
+    def get_party_by_name(self, name):
+        return list(self.database[ELECTORAL_LISTS_COLLECTION].find({'candidatos': {'$regex': ".*" + query_format(name) + ".*", '$options': 'xsi'}}, {'partido':1, '_id': 0}))
