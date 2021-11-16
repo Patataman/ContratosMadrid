@@ -21,7 +21,7 @@ b { font-weight: bold; }
     cursor:pointer;
     &.fa-pulse { animation-duration: 2s !important; }
 }
-.close-flash, .pointer { cursor:pointer; }
+.close-flash, .pointer, .pointer * { cursor:pointer; }
 
 nav {
     color: $color-secundary;

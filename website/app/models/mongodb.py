@@ -15,9 +15,10 @@ MONGODB_ID = '_id'
 def contract_file_to_json(file_path, file_name):
     file = open(file_path + '/' + file_name, encoding="utf8", errors='ignore')
     json_file = json.load(file)
-    for i in list(json_file.keys()):
-        if '.' in i:
-            json_file[i.replace('.', '')] = json_file.pop(i)
+    items = json_file.items()
+    for k, v in list(items):
+        if ' euros' in v or '€' in v or 'euros ' in v:
+            json_file['presupuesto'] = float(json_file.pop(k).split(' ')[0].replace('.', '').replace(',', '.'))
     json_file['categoria'] = file_path.split('/')[-1]
     json_file.update({MONGODB_ID: file_name.split(".")[0]})
     file.close()
@@ -52,7 +53,7 @@ class MongoDB:
         return list(self.database[CONTRACT_COLLECTION].find({}))
 
     def get_contracts_by_title(self, title):
-        return list(self.database[CONTRACT_COLLECTION].find({'titulo': {'$regex': ".*" + title + ".*"}}))
+        return list(self.database[CONTRACT_COLLECTION].find({'titulo': {'$regex': ".*" + title + ".*",'$options': 'i'}}))
 
     def get_contract_by_id(self, id):
         return self.database[CONTRACT_COLLECTION].find_one({'_id': id})

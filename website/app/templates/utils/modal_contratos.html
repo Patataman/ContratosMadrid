@@ -13,66 +13,22 @@
                     <h5>Información del contrato:</h5>
                     <table class="table table-striped">
                         <tbody>
-                            <tr>
-                                <th scope="row">Título:</th>
-                                <td>{{ contrato.titulo }}</td>
-                            </tr>
-                            <tr>
-                                <th scope="row">Estado:</th>
-                                <td>{{ contrato.status }}</td>
-                            </tr>
-                            <tr>
-                                <th scope="row">Tipo de publicación:</th>
-                                <td>{{ contrato['tipo-publicacion'] }}</td>
-                            </tr>
-                            <tr>
-                                <th scope="row">Objeto del contrato:</th>
-                                <td>{{ contrato['objeto-del-contrato'] }}</td>
-                            </tr>
-                            <tr>
-                                <th scope="row">Código CPV:</th>
-                                <td>{{ contrato['codigo-cpv'] }}</td>
-                            </tr>
-                            <tr>
-                                <th scope="row">Nº expediente:</th>
-                                <td>{{ contrato['numero-de-expediente'] }}</td>
-                            </tr>
-                            <tr>
-                                <th scope="row">Referencia:</th>
-                                <td>{{ contrato.referencia }}</td>
-                            </tr>
-                            <tr>
-                                <th scope="row">Tipo de contrato:</th>
-                                <td>{{ contrato['tipo-de-contrato'] }}</td>
-                            </tr>
-                            <tr>
-                                <th scope="row">Entidad adjudicadora:</th>
-                                <td>{{ contrato['entidad-adjudicadora'] }}</td>
-                            </tr>
-                            <tr>
-                                <th scope="row">Código NUTS:</th>
-                                <td>{{ contrato.status}} </td>
-                            </tr>
-                            <tr>
-                                <th scope="row">Procedimiento adjudicación:</th>
-                                <td>{{ contrato['procedimiento-adjudicacion'] }}</td>
-                            </tr>
-                            <tr>
-                                <th scope="row">Presupuesto base:</th>
-                                <td>{{ contrato['presupuesto-base-licitacion-(sin-impuestos)'] }}</td>
-                            </tr>
-                            <tr>
-                                <th scope="row">Duración:</th>
-                                <td>{{ contrato['duracion-del-contrato'] }}</td>
-                            </tr>
-                            <tr>
-                                <th scope="row">Fecha:</th>
-                                <td>{{ contrato['alguna-fecha'] }}</td>
-                            </tr>
-                            <tr>
-                                <th scope="row">URL:</th>
-                                <td>{{ contrato.url }} </td>
-                            </tr>
+                            {% set keys = contrato.keys()|sort %}
+                            {% for k in keys %}
+                                {% if k == 'url' %}
+                                <tr>
+                                    <th scope='row'>{{ k|replace('-', ' ')|title }}</th>
+                                    <td>
+                                        <a href="{{ contrato[k] }}" target="_blank">{{ contrato[k] }}</a>
+                                    </td>
+                                </tr>
+                                {% elif k != '_id' %}
+                                <tr>
+                                    <th scope='row'>{{ k|replace('-', ' ')|title }}</th>
+                                    <td>{{ contrato[k] }}</td>
+                                </tr>
+                                {% endif %}
+                            {% endfor %}
                         </tbody>
                     </table>
                 </div>
