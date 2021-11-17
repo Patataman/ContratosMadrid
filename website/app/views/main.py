@@ -7,6 +7,7 @@ import locale
 import time
 import json
 import requests
+from searchtweets import ResultStream, gen_rule_payload, load_credentials, collect_results
 
 main_module = Blueprint('main', __name__, template_folder='../templates')
 
@@ -20,9 +21,12 @@ def index():
                      app.mongo.get_contracts_categories()]
     category_list.sort(key=lambda x: x[1], reverse=True)
     total_money = sum(map(lambda j: j['presupuesto'] if 'presupuesto' in j.keys() else 0, all_contracts)), 2
+    
+    premium_search_args = tw_auth("app/config/twitter_keys.yaml")
+    tweets = tw_query("comunidad madrid contrato", 10, premium_search_args)
 
     return render_template('index.html', numero_contratos=len(all_contracts),
-                           categorias=list(category_list), dinero_total=locale.format_string("%.2f",total_money,grouping=True))
+                           categorias=list(category_list), dinero_total=locale.format_string("%.2f",total_money,grouping=True), tweets=tweets)
 
 @main_module.route('/results', methods=['POST'])
 def results():
@@ -149,3 +153,15 @@ def find_data(nif, slug, sett, data, n, AUTHENTICATION):
 #def find_company_offshore(company)
 
 #def find_person_offshore(person)
+
+def tw_auth(twitter_keys_yaml_path):
+  premium_search_args = load_credentials(twitter_keys_yaml_path, yaml_key="search_tweets_premium", env_overwrite=False)
+  return premium_search_args
+
+def tw_query(str_query, n_results, premium_search_args, from_date = "2021-09-01"):
+  rule = gen_rule_payload(str_query, from_date=from_date, results_per_call=n_results)
+  rs = ResultStream(rule_payload=rule,
+                  max_results=500,
+                  max_pages=1,
+                  **premium_search_args)
+  return list(rs.stream())

@@ -1,0 +1,14 @@
+search_tweets_ent:
+  account_type: enterprise
+  endpoint: <MY_ENDPOINT>
+  username: <MY_USERNAME>
+  password: <MY_PASSWORD>
+
+search_tweets_premium:
+  account_type: premium
+  endpoint: https://api.twitter.com/1.1/tweets/search/fullarchive/development.json
+  # if you have a bearer token, you can use it below. otherwise, swap the comment marks and use 
+  # your app's consumer key/secret - the library will generate and use a bearer token for you. 
+  bearer_token: 
+  #consumer_key: 
+  #consumer_secret: 
