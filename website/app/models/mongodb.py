@@ -5,9 +5,11 @@ import re
 from pymongo import MongoClient
 
 CONTRACTS_PATH = "app/models/data/contracts"
-ELECTORAL_LISTS_PATH = "app/models/data"
+ELECTORAL_LISTS_PATH = "app/models/data/candidaturas"
+OFFSHORE_PATH = "app/models/data/offshore"
 CONTRACT_COLLECTION = "contracts"
 ELECTORAL_LISTS_COLLECTION = "electoral_list"
+OFFSHORE_COLLECTION = "offshore"
 DATA_BASE_ID = "dme"
 MONGODB_ID = '_id'
 
@@ -32,8 +34,7 @@ class MongoDB:
         self.database = MongoClient()[DATA_BASE_ID]
 
     def add_contracts(self):
-        if not os.path.exists(CONTRACTS_PATH):
-            return
+        if not os.path.exists(CONTRACTS_PATH): return
         dirs = next(os.walk(CONTRACTS_PATH))[1]
         contracts_collection = self.database[CONTRACT_COLLECTION]
         contracts_list = []
@@ -53,7 +54,8 @@ class MongoDB:
         return list(self.database[CONTRACT_COLLECTION].find({}))
 
     def get_contracts_by_title(self, title):
-        return list(self.database[CONTRACT_COLLECTION].find({'titulo': {'$regex': ".*" + title + ".*",'$options': 'i'}}))
+        return list(
+            self.database[CONTRACT_COLLECTION].find({'titulo': {'$regex': ".*" + title + ".*", '$options': 'i'}}))
 
     def get_contract_by_id(self, id):
         return self.database[CONTRACT_COLLECTION].find_one({'_id': id})
@@ -65,17 +67,7 @@ class MongoDB:
         return list(self.database[CONTRACT_COLLECTION].find({'categoria': category}))
 
     def add_electoral_lists(self):
-        if not os.path.exists(ELECTORAL_LISTS_PATH):
-            return
-        files = filter(lambda x: '.json' in x, next(os.walk(ELECTORAL_LISTS_PATH))[2])
-        electoral_collection = self.database[ELECTORAL_LISTS_COLLECTION]
-        for i in files:
-            file = open(ELECTORAL_LISTS_PATH + '/' + i, encoding="utf8", errors='ignore')
-            json_file = json.load(file)
-            if isinstance(json_file, list):
-                electoral_collection.insert_many(json_file)
-            else:
-                electoral_collection.insert_one(json_file)
+        self.__insert_jsons(ELECTORAL_LISTS_COLLECTION, ELECTORAL_LISTS_PATH)
 
     def delete_all_electoral_lists(self):
         self.database[ELECTORAL_LISTS_COLLECTION].drop()
@@ -84,4 +76,27 @@ class MongoDB:
         return list(self.database[ELECTORAL_LISTS_COLLECTION].find({}))
 
     def get_party_by_name(self, name):
-        return list(self.database[ELECTORAL_LISTS_COLLECTION].find({'candidatos': {'$regex': ".*" + query_format(name) + ".*", '$options': 'xsi'}}, {'partido':1, '_id': 0}))
+        return list(self.database[ELECTORAL_LISTS_COLLECTION].find(
+            {'candidatos': {'$regex': ".*" + query_format(name) + ".*", '$options': 'xsi'}}, {'partido': 1, '_id': 0}))
+
+    def add_offshore_papers(self):
+        self.__insert_jsons(OFFSHORE_COLLECTION, OFFSHORE_PATH)
+
+    def delete_offshore_papers(self):
+        self.database[OFFSHORE_COLLECTION].drop()
+
+    def get_all_offshore_papers(self):
+        return list(self.database[ELECTORAL_LISTS_COLLECTION].find({}))
+
+    def __insert_jsons(self, collection, path):
+        if not os.path.exists(path): return
+        files = filter(lambda x: '.json' in x, next(os.walk(path))[2])
+        electoral_collection = self.database[collection]
+        for i in files:
+            file = open(path + '/' + i, encoding="utf8", errors='ignore')
+            json_file = json.load(file)
+            if isinstance(json_file, list):
+                electoral_collection.insert_many(json_file)
+            else:
+                electoral_collection.insert_one(json_file)
+

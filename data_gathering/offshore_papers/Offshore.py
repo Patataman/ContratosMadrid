@@ -11,9 +11,9 @@ def print_officers(tx, country):
         data.add(record.values()[0])
     for record in tx.run("MATCH (n:Entity) WHERE n.country_codes CONTAINS $country RETURN DISTINCT toLower(n.name)", country = country):
         data.add(record.values()[0])
-    data = list(data)
+    offshore = {"names": list(data)}
     with open('offshore_papers.json', 'w') as outfile:
-        json.dump(data, outfile)
+        json.dump(offshore, outfile)
 
 with driver.session() as session:
     session.read_transaction(print_officers, "ESP")

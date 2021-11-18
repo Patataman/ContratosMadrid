@@ -23,6 +23,9 @@ if len(app.mongo.get_all_contracts()) == 0:
 if len(app.mongo.get_all_electoral_lists()) == 0:
     app.mongo.add_electoral_lists()
 
+if len(app.mongo.get_all_offshore_papers()) == 0:
+    app.mongo.add_offshore_papers()
+
 app.register_blueprint(main_module, url_prefix='')
 
 # Compilation & minification of .scss files
