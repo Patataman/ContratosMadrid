@@ -86,17 +86,17 @@ class MongoDB:
         self.database[OFFSHORE_COLLECTION].drop()
 
     def get_all_offshore_papers(self):
-        return list(self.database[ELECTORAL_LISTS_COLLECTION].find({}))
+        return list(self.database[OFFSHORE_COLLECTION].find({}))
 
     def __insert_jsons(self, collection, path):
         if not os.path.exists(path): return
         files = filter(lambda x: '.json' in x, next(os.walk(path))[2])
-        electoral_collection = self.database[collection]
+        collection = self.database[collection]
         for i in files:
             file = open(path + '/' + i, encoding="utf8", errors='ignore')
             json_file = json.load(file)
             if isinstance(json_file, list):
-                electoral_collection.insert_many(json_file)
+                collection.insert_many(json_file)
             else:
-                electoral_collection.insert_one(json_file)
+                collection.insert_one(json_file)
 
