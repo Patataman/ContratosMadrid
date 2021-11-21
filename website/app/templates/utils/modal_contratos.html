@@ -16,6 +16,7 @@
                             {% set keys = contrato.keys()|sort %}
                             {% for k in keys %}
                                 {% if k == 'adjudicacion' %}
+                                {% if contrato[k] is mapping %}
                                 <tr>
                                   <th scope='row'>{{ k|replace('-', ' ')|title }}</th>
                                   <td>
@@ -31,6 +32,7 @@
                                     </table>
                                   </td>
                                 </tr>
+                                {% endif %}
                                 {% elif k == 'url' %}
                                 <tr>
                                     <th scope='row'>{{ k|replace('-', ' ')|title }}</th>
@@ -59,26 +61,30 @@
                                 Aviso: las personas aquí mencionadas solo coinciden por nombre, podría no tratarse de la misma persona.
                             </small>
                             <p class="mt-2">
-                            {% if contrato.librebor is defined %}
-                              {% if contrato.librebor|length > 0 %}
-                                <ul>
-                                {% for persona in contrato.librebor %}
-                                  {% if persona.type == "person" and persona.electoral_lists %}
-                                    <li>
-                                        <i class="fa fa-id-card" aria-hidden="true"></i>
-                                        {{ persona.name }}
-                                        <small class="text-muted">
-                                            {{ persona.electoral_lists }}
-                                        </small>
-                                    </li>
+                            {% if contrato.adjudicacion %}
+                                {% if contrato.librebor is defined %}
+                                  {% if contrato.librebor|length > 0 %}
+                                    <ul>
+                                    {% for persona in contrato.librebor %}
+                                      {% if persona.type == "person" and persona.electoral_lists %}
+                                        <li>
+                                            <i class="fa fa-id-card" aria-hidden="true"></i>
+                                            {{ persona.name }}
+                                            <small class="text-muted">
+                                                {{ persona.electoral_lists }}
+                                            </small>
+                                        </li>
+                                      {% endif %}
+                                    {% endfor %}
+                                    </ul>
+                                  {% else %}
+                                    No se encontraron coincidencias
                                   {% endif %}
-                                {% endfor %}
-                                </ul>
-                              {% else %}
-                                No se encontraron coincidencias
-                              {% endif %}
+                                {% else %}
+                                Calculando coincidencias...
+                                {% endif %}
                             {% else %}
-                            Calculando coincidencias...
+                                El contrato no se encuentra adjudicado
                             {% endif %}
                             </p>
                         </div>
@@ -90,32 +96,36 @@
                                 Aviso: Estas empresas o personas aparecen en documentos filtrados de paraísos fiscales
                             </small>
                             <p class="mt-2">
-                            {% if contrato.librebor is defined %}
-                              {% if contrato.librebor|length > 0 %}
-                                <ul>
-                                {% for entidad in contrato.librebor %}
-                                  {% if entidad.panama_papers %}
-                                    <li>
-                                      {% if entidad.type == "person" %}
-                                        <i class="fa fa-id-card" aria-hidden="true"></i>
-                                      {% else %}
-                                        <i class="fa fa-building" aria-hidden="true"></i>
-                                      {% endif %}
-                                        {{ entidad.name }}
-                                        <small class="text-muted">Panama Papers
-                                            <a href="https://es.wikipedia.org/wiki/Panama_Papers" target="_blank">
-                                                <i class="fa fa-external-link" aria-hidden="true"></i>
-                                            </a>
-                                        </small>
-                                    </li>
-                                  {% endif %}
-                                {% endfor %}
-                                </ul>
+                            {% if contrato.adjudicacion %}
+                              {% if contrato.librebor is defined %}
+                                {% if contrato.librebor|length > 0 %}
+                                  <ul>
+                                  {% for entidad in contrato.librebor %}
+                                    {% if entidad.panama_papers %}
+                                      <li>
+                                        {% if entidad.type == "person" %}
+                                          <i class="fa fa-id-card" aria-hidden="true"></i>
+                                        {% else %}
+                                          <i class="fa fa-building" aria-hidden="true"></i>
+                                        {% endif %}
+                                          {{ entidad.name }}
+                                          <small class="text-muted">Panama Papers
+                                              <a href="https://es.wikipedia.org/wiki/Panama_Papers" target="_blank">
+                                                  <i class="fa fa-external-link" aria-hidden="true"></i>
+                                              </a>
+                                          </small>
+                                      </li>
+                                    {% endif %}
+                                  {% endfor %}
+                                  </ul>
+                                {% else %}
+                                  No se encontraron coincidencias
+                                {% endif %}
                               {% else %}
-                                No se encontraron coincidencias
+                              Calculando coincidencias...
                               {% endif %}
                             {% else %}
-                            Calculando coincidencias...
+                                El contrato no se encuentra adjudicado
                             {% endif %}
                             </p>
                         </div>
