@@ -1,17 +1,22 @@
-import os
-import json
-import re
-
 from pymongo import MongoClient
 
+import json
+import os
+import pymongo
+import re
+
+
+MONGODB_ID = '_id'
+DATA_BASE_ID = "dme"
+
 CONTRACTS_PATH = "app/models/data/contracts"
-ELECTORAL_LISTS_PATH = "app/models/data/candidaturas"
-OFFSHORE_PATH = "app/models/data/offshore"
 CONTRACT_COLLECTION = "contracts"
 ELECTORAL_LISTS_COLLECTION = "electoral_list"
+ELECTORAL_LISTS_PATH = "app/models/data/candidaturas"
 OFFSHORE_COLLECTION = "offshore"
-DATA_BASE_ID = "dme"
-MONGODB_ID = '_id'
+OFFSHORE_PATH = "app/models/data/offshore"
+COMPANY_COLLECTION = "company"
+COMPANY_PATH = "app/models/data/companies"
 
 
 def contract_file_to_json(file_path, file_name):
@@ -27,11 +32,39 @@ def contract_file_to_json(file_path, file_name):
     return json_file
 
 def query_format(str):
-    return re.sub('[aAáÁ]', '[aAáÁ]', re.sub('[eEéÉ]', '[eEéÉ]', re.sub('[iIíÍ]', '[iIíÍ]', re.sub('[oOóÓ]', '[oOóÓ]', re.sub('[uUúüÚÜ]', '[uUúüÚÜ]', re.sub('[nNñÑ]', '[nNñÑ]', re.sub(' +', '.*', str)))))))
+    return re.sub(
+        '[aAáÁ]', '[aAáÁ]',
+        re.sub('[eEéÉ]', '[eEéÉ]',
+               re.sub('[iIíÍ]', '[iIíÍ]',
+                      re.sub('[oOóÓ]', '[oOóÓ]',
+                             re.sub('[uUúüÚÜ]', '[uUúüÚÜ]',
+                                    re.sub('[nNñÑ]', '[nNñÑ]',
+                                           re.sub(' +', '.*', str)
+                                          )
+                                   )
+                            )
+                     )
+              )
+    )
 
 class MongoDB:
     def __init__(self):
         self.database = MongoClient()[DATA_BASE_ID]
+
+    def init_db(self):
+        """ Inicializa la bbdd si alguna colección no existe
+        """
+        if len(self.get_all_contracts()) == 0:
+            self.add_contracts()
+
+        if len(self.get_all_electoral_lists()) == 0:
+            self.add_electoral_lists()
+
+        if len(self.get_all_offshore_papers()) == 0:
+            self.add_offshore_papers()
+
+        if len(self.get_all_companies()) == 0:
+            self.add_company_dataset()
 
     def add_contracts(self):
         if not os.path.exists(CONTRACTS_PATH): return
@@ -100,3 +133,36 @@ class MongoDB:
             else:
                 collection.insert_one(json_file)
 
+    def update_contract(self, contract_id:int, new_data:dict):
+        """ Actualiza el contrato dado
+        """
+        self.database[CONTRACT_COLLECTION].update_one({"_id": contract_id}, { "$set": new_data })
+
+    def add_company(self, company:dict):
+        """ Añade una nueva compañía a su colección
+            Esta colección se utiliza para las localidades
+
+            company es el diccionario que devuelve LibreBor
+        """
+        try:
+            self.database[COMPANY_COLLECTION].insert_one(company.copy())
+        except pymongo.errors.DuplicateKeyError:
+            pass
+        except Exception as e:
+            raise e
+
+    def get_all_companies(self):
+        """ Devuelve todas las companía indexadas
+        """
+        return list(self.database[COMPANY_COLLECTION].find({}))
+
+    def add_company_dataset(self):
+        """ Crea la colección de compañías a partir de los JSON
+        """
+        self.__insert_jsons(COMPANY_COLLECTION, COMPANY_PATH)
+
+    def filter_company(self, filters:dict):
+        """ Devuelve las compañía que cumple los filtros.
+            filters es un diccionario key:valç
+        """
+        return list(self.database[COMPANY_COLLECTION].find(filters))

@@ -17,14 +17,7 @@ app.static_folder=app.root_path + app.static_url_path
 app.mongo = MongoDB()  # En las vistas hacer app.mongo para acceder
 
 # Indexa en el mongo los datos si no existen
-if len(app.mongo.get_all_contracts()) == 0:
-    app.mongo.add_contracts()
-
-if len(app.mongo.get_all_electoral_lists()) == 0:
-    app.mongo.add_electoral_lists()
-
-if len(app.mongo.get_all_offshore_papers()) == 0:
-    app.mongo.add_offshore_papers()
+app.mongo.init_db()
 
 app.register_blueprint(main_module, url_prefix='')
 

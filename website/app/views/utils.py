@@ -7,7 +7,7 @@ import requests
 #SANDBOX: Si True utiliza la sandbox de LIBREBOR para no consumir consultas (usar con ITERATE = False)
 #ITERATE: Si True utiliza el método recursivo para obtener también empresas constituidas por la original
 
-SANDBOX = True
+SANDBOX = False
 ITERATE = False
 MAX_ITERS = 10
 
@@ -124,17 +124,27 @@ def tw_auth(twitter_keys_yaml_path):
 
 
 def tw_query(str_query, n_results, auth, from_date="2021-09-01"):
-    rule = gen_rule_payload(str_query, from_date=from_date, results_per_call=n_results)
-    rs = ResultStream(
-        rule_payload=rule,
-        max_results=n_results,
-        max_pages=1,
-        **auth
-    )
+    # rule = gen_rule_payload(str_query, from_date=from_date, results_per_call=n_results)
+    # try:
+    #     rs = ResultStream(
+    #         rule_payload=rule,
+    #         max_results=500,
+    #         max_pages=1,
+    #         **auth
+    #     )
+    #     iterator = [tweet for tweet in rs.stream() if tweet.tweet_type !=  'retweet']
+    # except:
+        # Default tweets
+    iterator = [
+        {"id": "1398592369117876226"},
+        {"id": "1461354005813084164"},
+        {"id": "1346487426047422465"},
+        {"id": "1337284480109748226"},
+        {"id": "1385930017776021507"}
+    ]
+
     tweets = []
-    for tweet in rs.stream():
-        if tweet.tweet_type in ['retweet']:
-            continue
+    for tweet in iterator:
         if len(tweets) >= 10:
             break
         html = requests.get(

@@ -1,18 +1,19 @@
+from app.views.utils import librebor_find_data, tw_auth, tw_query
 from flask import (
     Blueprint, flash, render_template, make_response, session,
     request, jsonify, current_app as app, url_for, abort, redirect
 )
-from app.views.utils import librebor_find_data, tw_auth, tw_query
 
-import time
 import json
-import requests
 import locale
+import requests
+import time
 
+
+TW_AUTH = tw_auth("app/config/twitter_keys.yaml")
 
 main_module = Blueprint('main', __name__, template_folder='../templates')
 
-TW_AUTH = tw_auth("app/config/twitter_keys.yaml")
 
 locale.setlocale(locale.LC_ALL, '')
 @main_module.route('/', methods=['GET'])
@@ -26,7 +27,7 @@ def index():
 
     total_money = sum(map(lambda j: j['presupuesto'] if 'presupuesto' in j.keys() else 0, all_contracts))
 
-    tweets = tw_query("comunidad madrid contrato", 20, TW_AUTH)
+    tweets = tw_query("comunidad madrid contrato", 10, TW_AUTH)
 
     return render_template(
         'index.html', numero_contratos=len(all_contracts), categorias=list(category_list),
@@ -52,20 +53,35 @@ def results():
 def query():
     """ API NIF = B49154818
         Sandbox NIF = A46103834
+
+        Función para hacer la búsqueda en LibreBor de la empresa solicitada.
+        Argumentos GET: nif y company
+        A esto solo se le debería llamar si el contrato recuperado no tiene
+        la clave "librebor"
     """
-    # VERBOSE: Si True devuelve también los elementos que no aparecen en
-    # la BBDD (Para listar todos los miembros de una empresa usar con ITERATE = False)
-    VERBOSE = True
+    # VERBOSE: Si True devuelve también los elementos que no aparecen en la BBDD
+    VERBOSE = False
 
     auth = requests.auth.HTTPBasicAuth(app.config['LIBREBOR_API_USER'], app.config['LIBREBOR_API_PASS'])
     slug = request.args.get('nif')
+    contract_id = request.args.get('contract')
 
     visited, results, iterations = librebor_find_data(app.mongo, True, slug, auth)
+
     if not VERBOSE:
         res = list()
         for item in results:
             if item["panama_papers"] or (item["type"] == "person" and item["electoral_lists"] is not None):
                 res += [item]
+
+        # Si hay resultados actualizamos los datos del contrato
+        # Por un lado actualizamos el contrato
+        app.mongo.update_contract(request.args.get('contract'), {"librebor": res})
+        # Por otro añadimos la empresa a nuestra bbdd
+        for r in results:
+            if r['type'] == "company":
+                app.mongo.add_company(r)
+
         return jsonify(res)
     else:
         return jsonify(results)
