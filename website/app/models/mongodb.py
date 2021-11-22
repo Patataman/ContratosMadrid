@@ -25,15 +25,18 @@ def contract_file_to_json(file_path, file_name):
     items = json_file.items()
     for k, v in list(items):
         if "esupuesto" in k and (' euros' in v or '€' in v or 'euros ' in v):
-            try:
-                # if "porte total" in v or "estimado" in v:
-                v = v.split("euros")[0]
-                numero = "".join([letra for i, letra in enumerate(v) if (letra == "," and v[i-1].isdigit()) or letra.isdigit()])
-                numero = numero.replace(",", ".")
-                json_file['presupuesto'] = float(numero)
-            except Exception as e:
-                import pdb; pdb.set_trace()
-                raise e
+            # if "porte total" in v or "estimado" in v:
+            v = v.split("euros")[0]
+            numero = "".join([letra for i, letra in enumerate(v) if (letra == "," and v[i-1].isdigit()) or letra.isdigit()])
+            numero = numero.replace(",", ".")
+            json_file['presupuesto'] = float(numero)
+        if k == 'adjudicacion':
+            if type(v) == dict and len(v) > 0:
+                vv = {kk.replace("<strong>","").replace("</strong>", ""): val for kk, val in v.items()}
+                json_file[k] = vv
+            else:
+                # Si no es un diccionario es que está mal (o vacío), y lo quitamos
+                json_file.pop(k)
 
     json_file['categoria'] = file_path.split('/')[-1]
     json_file.update({MONGODB_ID: file_name.split(".")[0]})

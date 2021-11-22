@@ -95,7 +95,7 @@ class Contratos(scrapy.Spider):
                 adjudicacion = {}
                 for col, val in zip(columnas, valores):
                     col_nombre = col.xpath("strong").extract_first().strip()
-                    col_nombre = col_nombre.lower().replace("º", "-")
+                    col_nombre = col_nombre.lower().replace("º", "-").replace("<strong>", "").replace("</strong>")
                     col_val = val.xpath("text()").extract_first()
                     if col_val:
                         col_val = col_val.strip()
