@@ -15,6 +15,7 @@ ELECTORAL_LISTS_COLLECTION = "electoral_list"
 ELECTORAL_LISTS_PATH = "app/models/data/candidaturas"
 OFFSHORE_COLLECTION = "offshore"
 OFFSHORE_PATH = "app/models/data/offshore"
+COMPANY_COLLECTION = "company"
 
 
 def contract_file_to_json(file_path, file_name):
@@ -172,6 +173,16 @@ class MongoDB:
         """ Devuelve todas las companía indexadas
         """
         return self.database[COMPANY_COLLECTION].find({})
+    
+    def get_companies_locations(self):
+        result = self.database[COMPANY_COLLECTION].aggregate(
+            [{
+                '$group' : 
+                    { '_id' : '$province', 
+                     'count' : {'$sum' : 1}
+                     }}
+            ])
+        return result
 
     def add_company_dataset(self):
         """ Crea la colección de compañías a partir de los JSON

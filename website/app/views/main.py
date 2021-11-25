@@ -4,7 +4,8 @@ from flask import (
     request, jsonify, current_app as app, url_for, abort, redirect
 )
 
-import json
+import json 
+from bson import json_util
 import locale
 import requests
 import time
@@ -20,7 +21,7 @@ locale.setlocale(locale.LC_ALL, '')
 def index():
     """ Página principal
     """
-    all_contracts = app.mongo.get_all_contracts()
+    all_contracts = app.mongo.get_all_contracts().count()
     category_list = [(i, app.mongo.get_contracts_by_category(i).count()) for i in
                      app.mongo.get_contracts_categories()]
     category_list.sort(key=lambda x: x[1], reverse=True)
@@ -34,11 +35,18 @@ def index():
     else:
         total_money = locale.format_string("%.2f", total_money, grouping=True)
 
+    companies_locations = app.mongo.get_companies_locations()
+    #iterate over to get a list of dicts
+    companies_locations_dic = [doc for doc in companies_locations]
+
+    #serialize to json string
+    companies_locations_json_string = json.dumps(companies_locations_dic,default=json_util.default)
+    
     tweets = tw_query("comunidad madrid contrato", 10, TW_AUTH)
 
     return render_template(
-        'index.html', numero_contratos=all_contracts.count(), categorias=list(category_list),
-        dinero_total=total_money, tweets=tweets
+        'index.html', numero_contratos=all_contracts, categorias=list(category_list),
+        dinero_total=total_money, companies_locations=companies_locations_json_string, tweets=tweets
     )
 
 

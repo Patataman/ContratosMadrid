@@ -1,4 +1,5 @@
 $(document).ready(function() {
+    console.log(companies_locations);
     /* Data points defined as an array of LatLng objects */
     var heatmapData = [
         new google.maps.LatLng(37.782, -122.447),
@@ -17,12 +18,12 @@ $(document).ready(function() {
         new google.maps.LatLng(37.785, -122.435)
     ];
 
-    var sanFrancisco = new google.maps.LatLng(37.774546, -122.433523);
+    var madrid = new google.maps.LatLng(40.5248319, -3.771562775451811);
 
     var map = new google.maps.Map(document.getElementById('map'), {
-        center: sanFrancisco,
-        zoom: 13,
-        mapTypeId: 'satellite'
+        center: madrid,
+        zoom: 7,
+        mapTypeId: 'roadmap'
     });
 
     var heatmap = new google.maps.visualization.HeatmapLayer({
