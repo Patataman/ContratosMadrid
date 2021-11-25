@@ -25,14 +25,20 @@ def index():
                      app.mongo.get_contracts_categories()]
     category_list.sort(key=lambda x: x[1], reverse=True)
 
-    # TODO cambiar a query de mongo
-    total_money = sum(map(lambda j: j['presupuesto'] if 'presupuesto' in j.keys() else 0, all_contracts))
+    total_money = str(app.mongo.get_total_money())
+    if len(total_money.split(".")[0]) > 7:
+        # Para escribir en Millones
+        total_money = total_money.split(".")[0]
+        total_money = total_money[:-6]
+        total_money = locale.format_string("%.0f", float(total_money), grouping=True) + " M"
+    else:
+        total_money = locale.format_string("%.2f", total_money, grouping=True)
 
     tweets = tw_query("comunidad madrid contrato", 10, TW_AUTH)
 
     return render_template(
         'index.html', numero_contratos=all_contracts.count(), categorias=list(category_list),
-        dinero_total=locale.format_string("%.2f", total_money, grouping=True), tweets=tweets
+        dinero_total=total_money, tweets=tweets
     )
 
 

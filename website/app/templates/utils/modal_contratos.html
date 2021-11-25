@@ -64,10 +64,12 @@
                             <p class="mt-2">
                             {% if contrato.adjudicacion %}
                                 {% if contrato.librebor is defined %}
+                                  {% set listas = 0 %}
                                   {% if contrato.librebor|length > 0 %}
                                     <ul>
                                     {% for persona in contrato.librebor %}
                                       {% if persona.type == "person" and persona.electoral_lists %}
+                                        {% set listas = listas + 1 %}
                                         <li>
                                             <i class="fa fa-id-card" aria-hidden="true"></i>
                                             {{ persona.name }}
@@ -78,7 +80,8 @@
                                       {% endif %}
                                     {% endfor %}
                                     </ul>
-                                  {% else %}
+                                  {% endif %}
+                                  {% if listas == 0 %}
                                     No se encontraron coincidencias
                                   {% endif %}
                                 {% else %}
@@ -100,9 +103,11 @@
                             {% if contrato.adjudicacion %}
                               {% if contrato.librebor is defined %}
                                 {% if contrato.librebor|length > 0 %}
+                                  {% set offshore = 0 %}
                                   <ul>
                                   {% for entidad in contrato.librebor %}
                                     {% if entidad.panama_papers %}
+                                      {% set offshore = offshore + 1 %}
                                       <li>
                                         {% if entidad.type == "person" %}
                                           <i class="fa fa-id-card" aria-hidden="true"></i>
@@ -119,7 +124,8 @@
                                     {% endif %}
                                   {% endfor %}
                                   </ul>
-                                {% else %}
+                                {% endif %}
+                                {% if offshore == 0 %}
                                   No se encontraron coincidencias
                                 {% endif %}
                               {% else %}

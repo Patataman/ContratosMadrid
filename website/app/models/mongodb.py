@@ -15,8 +15,6 @@ ELECTORAL_LISTS_COLLECTION = "electoral_list"
 ELECTORAL_LISTS_PATH = "app/models/data/candidaturas"
 OFFSHORE_COLLECTION = "offshore"
 OFFSHORE_PATH = "app/models/data/offshore"
-COMPANY_COLLECTION = "company"
-COMPANY_PATH = "app/models/data/companies"
 
 
 def contract_file_to_json(file_path, file_name):
@@ -75,9 +73,6 @@ class MongoDB:
         if self.get_all_offshore_papers().count() == 0:
             self.add_offshore_papers()
 
-        if self.get_all_companies().count() == 0:
-            self.add_company_dataset()
-
     def add_contracts(self):
         if not os.path.exists(CONTRACTS_PATH): return
         dirs = next(os.walk(CONTRACTS_PATH))[1]
@@ -109,6 +104,15 @@ class MongoDB:
 
     def get_contracts_by_category(self, category):
         return self.database[CONTRACT_COLLECTION].find({'categoria': category})
+
+    def get_total_money(self):
+        """ Query para sumar todo el dinero de los contratos
+        """
+        return self.database[CONTRACT_COLLECTION].aggregate(
+            [
+                {"$group": {"_id": '', "money": {"$sum": "$presupuesto"}}},
+                {"$project": {"_id":0, "totalMoney": "$money"}}
+            ]).next()['totalMoney']
 
     def add_electoral_lists(self):
         self.__insert_jsons(ELECTORAL_LISTS_COLLECTION, ELECTORAL_LISTS_PATH)
