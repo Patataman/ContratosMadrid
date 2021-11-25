@@ -66,16 +66,16 @@ class MongoDB:
     def init_db(self):
         """ Inicializa la bbdd si alguna colección no existe
         """
-        if len(self.get_all_contracts()) == 0:
+        if self.get_all_contracts().count() == 0:
             self.add_contracts()
 
-        if len(self.get_all_electoral_lists()) == 0:
+        if self.get_all_electoral_lists().count() == 0:
             self.add_electoral_lists()
 
-        if len(self.get_all_offshore_papers()) == 0:
+        if self.get_all_offshore_papers().count() == 0:
             self.add_offshore_papers()
 
-        if len(self.get_all_companies()) == 0:
+        if self.get_all_companies().count() == 0:
             self.add_company_dataset()
 
     def add_contracts(self):
@@ -96,20 +96,19 @@ class MongoDB:
         self.database[CONTRACT_COLLECTION].drop()
 
     def get_all_contracts(self):
-        return list(self.database[CONTRACT_COLLECTION].find({}))
+        return self.database[CONTRACT_COLLECTION].find({})
 
     def get_contracts_by_title(self, title):
-        return list(
-            self.database[CONTRACT_COLLECTION].find({'titulo': {'$regex': ".*" + title + ".*", '$options': 'i'}}))
+        return self.database[CONTRACT_COLLECTION].find({'titulo': {'$regex': ".*" + title + ".*", '$options': 'i'}})
 
     def get_contract_by_id(self, id):
         return self.database[CONTRACT_COLLECTION].find_one({'_id': id})
 
     def get_contracts_categories(self):
-        return list(self.database[CONTRACT_COLLECTION].distinct('categoria'))
+        return self.database[CONTRACT_COLLECTION].distinct('categoria')
 
     def get_contracts_by_category(self, category):
-        return list(self.database[CONTRACT_COLLECTION].find({'categoria': category}))
+        return self.database[CONTRACT_COLLECTION].find({'categoria': category})
 
     def add_electoral_lists(self):
         self.__insert_jsons(ELECTORAL_LISTS_COLLECTION, ELECTORAL_LISTS_PATH)
@@ -118,11 +117,13 @@ class MongoDB:
         self.database[ELECTORAL_LISTS_COLLECTION].drop()
 
     def get_all_electoral_lists(self):
-        return list(self.database[ELECTORAL_LISTS_COLLECTION].find({}))
+        return self.database[ELECTORAL_LISTS_COLLECTION].find({})
 
     def get_party_by_name(self, name):
-        return list(self.database[ELECTORAL_LISTS_COLLECTION].find(
-            {'candidatos': {'$regex': ".*" + query_format(name) + ".*", '$options': 'xsi'}}, {'partido': 1, '_id': 0}))
+        return self.database[ELECTORAL_LISTS_COLLECTION].find(
+            {'candidatos': {'$regex': ".*" + query_format(name) + ".*", '$options': 'xsi'}},
+            {'partido': 1, '_id': 0}
+        )
 
     def add_offshore_papers(self):
         self.__insert_jsons(OFFSHORE_COLLECTION, OFFSHORE_PATH)
@@ -131,7 +132,7 @@ class MongoDB:
         self.database[OFFSHORE_COLLECTION].drop()
 
     def get_all_offshore_papers(self):
-        return list(self.database[OFFSHORE_COLLECTION].find({}))
+        return self.database[OFFSHORE_COLLECTION].find({})
 
     def __insert_jsons(self, collection, path):
         if not os.path.exists(path): return
@@ -166,7 +167,7 @@ class MongoDB:
     def get_all_companies(self):
         """ Devuelve todas las companía indexadas
         """
-        return list(self.database[COMPANY_COLLECTION].find({}))
+        return self.database[COMPANY_COLLECTION].find({})
 
     def add_company_dataset(self):
         """ Crea la colección de compañías a partir de los JSON
@@ -177,4 +178,4 @@ class MongoDB:
         """ Devuelve las compañía que cumple los filtros.
             filters es un diccionario key:valç
         """
-        return list(self.database[COMPANY_COLLECTION].find(filters))
+        return self.database[COMPANY_COLLECTION].find(filters)

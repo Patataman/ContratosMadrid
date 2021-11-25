@@ -21,16 +21,17 @@ def index():
     """ Página principal
     """
     all_contracts = app.mongo.get_all_contracts()
-    category_list = [(i, len(app.mongo.get_contracts_by_category(i))) for i in
+    category_list = [(i, app.mongo.get_contracts_by_category(i).count()) for i in
                      app.mongo.get_contracts_categories()]
     category_list.sort(key=lambda x: x[1], reverse=True)
 
+    # TODO cambiar a query de mongo
     total_money = sum(map(lambda j: j['presupuesto'] if 'presupuesto' in j.keys() else 0, all_contracts))
 
     tweets = tw_query("comunidad madrid contrato", 10, TW_AUTH)
 
     return render_template(
-        'index.html', numero_contratos=len(all_contracts), categorias=list(category_list),
+        'index.html', numero_contratos=all_contracts.count(), categorias=list(category_list),
         dinero_total=locale.format_string("%.2f", total_money, grouping=True), tweets=tweets
     )
 
@@ -44,7 +45,7 @@ def results():
     """
     busqueda = request.form['busqueda']
     t0 = time.time()
-    search = app.mongo.get_contracts_by_title(busqueda)
+    search = list(app.mongo.get_contracts_by_title(busqueda).limit(50))
     tiempo = time.time() - t0
     return render_template('results.html', busqueda=busqueda, contratos=search, tiempo=tiempo)
 

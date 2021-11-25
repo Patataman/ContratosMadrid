@@ -15,7 +15,8 @@
                         <tbody>
                             {% set keys = contrato.keys()|sort %}
                             {% for k in keys %}
-                                {% if k == 'adjudicacion' %}
+                              {% if k == "librebor" %}
+                              {% elif k == "adjudicacion" %}
                                 {% if contrato[k] is mapping %}
                                 <tr>
                                   <th scope='row'>{{ k|replace('-', ' ')|title }}</th>
@@ -33,19 +34,19 @@
                                   </td>
                                 </tr>
                                 {% endif %}
-                                {% elif k == 'url' %}
+                              {% elif k == 'url' %}
                                 <tr>
                                     <th scope='row'>{{ k|replace('-', ' ')|title }}</th>
                                     <td>
                                         <a href="{{ contrato[k] }}" target="_blank">{{ contrato[k] }}</a>
                                     </td>
                                 </tr>
-                                {% elif k != '_id' %}
+                              {% elif k != '_id' %}
                                 <tr>
                                     <th scope='row'>{{ k|replace('-', ' ')|title }}</th>
                                     <td>{{ contrato[k] }}</td>
                                 </tr>
-                                {% endif %}
+                              {% endif %}
                             {% endfor %}
                         </tbody>
                     </table>
