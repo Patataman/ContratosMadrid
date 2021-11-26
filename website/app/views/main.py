@@ -1,11 +1,11 @@
 from app.views.utils import librebor_find_data, tw_auth, tw_query
+from bson import json_util
 from flask import (
     Blueprint, flash, render_template, make_response, session,
     request, jsonify, current_app as app, url_for, abort, redirect
 )
 
-import json 
-from bson import json_util
+import json
 import locale
 import requests
 import time
@@ -21,6 +21,7 @@ locale.setlocale(locale.LC_ALL, '')
 def index():
     """ Página principal
     """
+    ## Cosas de contratos
     all_contracts = app.mongo.get_all_contracts().count()
     category_list = [(i, app.mongo.get_contracts_by_category(i).count()) for i in
                      app.mongo.get_contracts_categories()]
@@ -34,19 +35,31 @@ def index():
         total_money = locale.format_string("%.0f", float(total_money), grouping=True) + " M"
     else:
         total_money = locale.format_string("%.2f", total_money, grouping=True)
+    #########################
 
+    ######### Localizaciones para el mapa
     companies_locations = app.mongo.get_companies_locations()
     #iterate over to get a list of dicts
-    companies_locations_dic = [doc for doc in companies_locations]
+    companies_locations = [doc for doc in companies_locations]
 
-    #serialize to json string
-    companies_locations_json_string = json.dumps(companies_locations_dic,default=json_util.default)
-    
+    locations = []
+    for company in companies_locations:
+        resp = requests.get(
+            f"https://maps.googleapis.com/maps/api/geocode/json?address={company['_id']}&region=es&key={app.config['GOOGLE_API']}"
+        )
+        if resp.status_code == 200:
+            locations += [
+                resp.json()['results'][0]['geometry']['location']
+            ]*company['count']
+    ##################
+
+    ## Feed de Twitter
     tweets = tw_query("comunidad madrid contrato", 10, TW_AUTH)
+    ######
 
     return render_template(
         'index.html', numero_contratos=all_contracts, categorias=list(category_list),
-        dinero_total=total_money, companies_locations=companies_locations_json_string, tweets=tweets
+        dinero_total=total_money, companies_locations=locations, tweets=tweets
     )
 
 

@@ -173,12 +173,12 @@ class MongoDB:
         """ Devuelve todas las companía indexadas
         """
         return self.database[COMPANY_COLLECTION].find({})
-    
+
     def get_companies_locations(self):
         result = self.database[COMPANY_COLLECTION].aggregate(
             [{
-                '$group' : 
-                    { '_id' : '$province', 
+                '$group' :
+                    { '_id' : '$province',
                      'count' : {'$sum' : 1}
                      }}
             ])

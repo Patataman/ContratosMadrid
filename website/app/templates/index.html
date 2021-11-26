@@ -70,8 +70,11 @@
     <script type="text/javascript">
         var companies_locations = {{ companies_locations | tojson }};
     </script>
-    {% assets filters="jsmin", output="js/index.min.js", "js/index.js" %}
+
+    <script type="text/javascript" src="{{url_for('static', filename='js/index.js')}}"></script>
+    {# {% assets filters="jsmin", output="js/index.min.js", "js/index.js" %}
         <script type="text/javascript" src="{{ ASSET_URL }}"></script>
     {% endassets %}
+    #} 
 {% endblock %}
 
