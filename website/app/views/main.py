@@ -49,8 +49,11 @@ def index():
         )
         if resp.status_code == 200:
             locations += [
-                resp.json()['results'][0]['geometry']['location']
-            ]*company['count']
+                {
+                    "location": resp.json()['results'][0]['geometry']['location'],
+                    "count": company['count']
+                }
+            ]
     ##################
 
     ## Feed de Twitter
