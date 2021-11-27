@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+
+{% block title %}
+ | Estadísticas
+{% endblock %}
+
+{% block extrahead %}
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+{% endblock %}
+
+{% block content %}
+
+    {# Buscador #}
+    <section class="our-height-4 col-12 d-flex align-items-center justify-content-center">
+        {% include 'utils/search_bar.html' with context %}
+    </section>
+
+    <section class="row row-cols-2 g-4 col-10 offset-1">
+        {# Contratos por categoría #}
+        <div class="col">
+          <div class="card h-100">
+              <div class="card-body">
+                  <h5 class="card-title">Contratos por categorías</h5>
+                  <p class="card-text">
+                      Los {{ contratos_por_cat['total'] }} se distribuyen de la siguiente forma
+                  </p>
+                  {{ contratos_por_cat_fig | safe }}
+              </div>
+          </div>
+        </div>
+        {###########################}
+
+        {# Distribución de empresas #}
+        <div class="col">
+          <div class="card h-100">
+              <div class="card-body">
+                  <h5 class="card-title">Empresas por contratos</h5>
+                  <p class="card-text">
+                      Las 5 empresas con mayor número de contratos son las siguientes
+                      <ul>
+                      {% for company, num in contratos_por_empresa.items() %}
+                        {% if loop.index0 < 5 %}
+                        <li> <label> {{ company }}: </label> {{ num }} </li>
+                        {% endif %}
+                      {% endfor %}
+                      </ul>
+                  </p>
+                  <p class="card-text">
+                      <small class="text-muted">Para visualizar el resto de las empresas utiliza el gráfico</small>
+                  </p>
+              </div>
+              <div class="card-img-bottom">
+                {{ contratos_por_empresa_fig | safe }}
+              </div>
+          </div>
+        </div>
+        {############################}
+
+        {# "Anomalías" #}
+        <div class="col">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title">Contratos con anomalías</h5>
+                <p class="card-text">
+                    En la siguiente gráfica se puede apreciar la proporción de los contratos en los que se ha
+                    detectado una posible relación con posibles puertas giratorias o presencia en paraísos fiscales
+                </p>
+            </div>
+            <div class="card-img-bottom">
+              {{ anomalias_fig | safe }}
+            </div>
+        </div>
+        </div>
+        {############################}
+    </section>
+{% endblock %}
+

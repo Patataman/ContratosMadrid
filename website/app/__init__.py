@@ -4,6 +4,7 @@ from logging.config import dictConfig
 
 from app.models.mongodb import MongoDB
 from app.views.main import main_module
+from app.views.stats import stats_module
 
 
 app = Flask(__name__)
@@ -20,6 +21,8 @@ app.mongo = MongoDB()  # En las vistas hacer app.mongo para acceder
 app.mongo.init_db()
 
 app.register_blueprint(main_module, url_prefix='')
+app.register_blueprint(stats_module, url_prefix='/stats')
+
 
 # Compilation & minification of .scss files
 # and minification of .js files it is done in the view

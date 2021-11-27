@@ -6,10 +6,10 @@ $(document).ready(function() {
         mapTypeId: 'roadmap'
     });
 
-    var max = Math.max.apply(null, companies_locations.flatMap(function(d) {return d.count}));
-    var min = Math.max.apply(null, companies_locations.flatMap(function(d) {return d.count}));
+    var max = Math.max.apply(null, Object.values(companies_locations).flatMap(function(d) {return d.count}));
+    var min = Math.max.apply(null, Object.values(companies_locations).flatMap(function(d) {return d.count}));
 
-    for (var i=0; i<companies_locations.length; i++) {
+    for (loc in companies_locations) {
         const cityCircle = new google.maps.Circle({
           strokeColor: "#FF0000",
           strokeOpacity: 0.8,
@@ -17,17 +17,17 @@ $(document).ready(function() {
           fillColor: "#FF0000",
           fillOpacity: 0.35,
           map,
-          center: companies_locations[i].location,
-          radius: Math.sqrt(companies_locations[i].count/max) * 100000,
+          center: companies_locations[loc]['center'],
+          radius: Math.sqrt(companies_locations[loc]['count']/max) * 100000,
         });
         new google.maps.Marker({
-            position: companies_locations[i].location,
+            position: companies_locations[loc]['center'],
             map: map,
             icon: 'static/img/empty.png',
             label: {
                 color: 'rgb(0,110,199)',
                 fontWeight: 'bold',
-                text: companies_locations[i].count + " contratos",
+                text: companies_locations[loc]['count'] + " contratos",
                 fontSize: "1.8em",
             },
         });

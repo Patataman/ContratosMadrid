@@ -17,13 +17,18 @@
     </head>
     <body>
         <nav>
-            <div id="banner">
-                <div id="banner-left">
+            <div id="banner" class="col-12">
+                <div id="banner-left" class="float-start col-7">
                     <a class="no-style d-flex align-items-center" href="/">
                     <div>
                         <img src="{{ url_for('static', filename='image/logo.png') }}" alt="Bandera CAM">
                     </div>
                     <h5 class="m-0">Contrataciones Madrid</h5>
+                    </a>
+                </div>
+                <div id="banner-right" class="float-end col-3">
+                    <a class="no-style d-flex" href="/stats">
+                        <h5 class="m-0">Estadísticas</h5>
                     </a>
                 </div>
                 {% block header %}{% endblock %}

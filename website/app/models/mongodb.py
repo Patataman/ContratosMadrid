@@ -94,6 +94,12 @@ class MongoDB:
     def get_all_contracts(self):
         return self.database[CONTRACT_COLLECTION].find({})
 
+    def get_by_contracts(self, _filter):
+        return self.database[CONTRACT_COLLECTION].find(_filter)
+
+    def get_aggregate_contracts(self, _filter):
+        return self.database[CONTRACT_COLLECTION].aggregate(_filter)
+
     def get_contracts_by_title(self, title):
         return self.database[CONTRACT_COLLECTION].find({'titulo': {'$regex': ".*" + title + ".*", '$options': 'i'}})
 
@@ -174,23 +180,38 @@ class MongoDB:
         """
         return self.database[COMPANY_COLLECTION].find({})
 
-    def get_companies_locations(self):
-        result = self.database[COMPANY_COLLECTION].aggregate(
-            [{
-                '$group' :
-                    { '_id' : '$province',
-                     'count' : {'$sum' : 1}
-                     }}
-            ])
-        return result
-
     def add_company_dataset(self):
         """ Crea la colección de compañías a partir de los JSON
         """
         self.__insert_jsons(COMPANY_COLLECTION, COMPANY_PATH)
 
-    def filter_company(self, filters:dict):
+    def find_company(self, filters:dict):
         """ Devuelve las compañía que cumple los filtros.
-            filters es un diccionario key:valç
+            filters es un diccionario key:val
         """
         return self.database[COMPANY_COLLECTION].find(filters)
+
+    def get_companies_locations(self):
+        result = self.database[COMPANY_COLLECTION].aggregate(
+            [{
+                '$group' : {
+                    '_id' : '$province',
+                    'count' : {'$sum' : 1}
+                }
+            }])
+        return result
+
+    def unique_company(self):
+        """ Devuelve companías únicas por NIF
+        """
+        # https://stackoverflow.com/questions/21053211/return-whole-document-from-aggregation
+        return self.database[COMPANY_COLLECTION].aggregate([
+            {
+                "$group": {
+                    "_id": "$nif",
+                    "document": {
+                        "$first": "$$CURRENT"
+                    }
+                }
+            }
+        ])

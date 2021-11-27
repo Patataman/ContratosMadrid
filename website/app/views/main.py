@@ -1,5 +1,5 @@
 from app.views.utils import librebor_find_data, tw_auth, tw_query
-from bson import json_util
+from collections import defaultdict
 from flask import (
     Blueprint, flash, render_template, make_response, session,
     request, jsonify, current_app as app, url_for, abort, redirect
@@ -38,25 +38,40 @@ def index():
     #########################
 
     ######### Localizaciones para el mapa
-    companies_locations = app.mongo.get_companies_locations()
-    #iterate over to get a list of dicts
-    companies_locations = [doc for doc in companies_locations]
+    # empresas únicas en la bbdd
+    companies = app.mongo.unique_company()
 
-    locations = []
-    for company in companies_locations:
+    # Recuperamos los contratos por empresa
+    top_nifs = app.mongo.get_aggregate_contracts([
+        {"$match": {"adjudicacion": { "$exists" : True }}},
+        {"$group": {
+            "_id": "$adjudicacion.nif adjudicatario",
+            "count": { "$sum": 1 }}
+        }
+    ])
+    # Convierte esto en un diccionario para agilizar búsqueda
+    top_nifs = {d['_id']: d['count'] for d in top_nifs}
+
+    contratos_por_localidad = defaultdict(int)
+    for doc in companies:
+        localidad = doc['document']['province']
+        contratos_por_localidad[localidad] += top_nifs[doc['_id']]
+
+    locations = defaultdict(dict)
+    for province, count in contratos_por_localidad.items():
         resp = requests.get(
-            f"https://maps.googleapis.com/maps/api/geocode/json?address={company['_id']}&region=es&key={app.config['GOOGLE_API']}"
+            f"https://maps.googleapis.com/maps/api/geocode/json?address={province}&region=es&key={app.config['GOOGLE_API']}"
         )
         if resp.status_code == 200:
-            locations += [
-                {
-                    "location": resp.json()['results'][0]['geometry']['location'],
-                    "count": company['count']
-                }
-            ]
+            nombre = resp.json()['results'][0]['address_components'][0]['short_name']
+            if nombre not in locations:
+                locations[nombre]['center'] = resp.json()['results'][0]['geometry']['location']
+                locations[nombre]['count'] = count
+            else:
+                locations[nombre]['count'] += count
     ##################
 
-    ## Feed de Twitter
+    # Feed de Twitter
     tweets = tw_query("comunidad madrid contrato", 10, TW_AUTH)
     ######
 
