@@ -102,6 +102,42 @@ def stats():
 
     # Anomalías
     t0 = time.time()
+
+    contratos_sospechosos = app.mongo.get_aggregate_contracts([
+        {"$match": {"librebor": {"$exists": True }}},
+        {"$unwind": "$librebor"},
+        {"$match": {"librebor.electoral_lists": {"$exists": True, "$ne": "null"}}},
+        {"$group": {"_id": "$_id"}}
+    ])
+
+    comprometido = len(list(contratos_sospechosos))
+
+    anomalias = {
+        "Limpio": contratos_por_cat['total'] - comprometido,
+        "Comprometido": comprometido
+    }
+
+    anomalias_fig = go.Figure(
+        data=[
+            go.Pie(
+                labels=[k for k in anomalias.keys()],
+                values=[v for v in anomalias.values()],
+                textinfo='label+percent',
+                insidetextorientation='radial',
+            )
+        ]
+    )
+
+    anomalias_html = ""
+    with NamedTemporaryFile() as tmp:
+        anomalias_fig.write_html(
+            tmp.name,
+            full_html=False,
+            include_plotlyjs=False
+        )
+        tmp.seek(0)
+        anomalias_html = tmp.read().decode("utf-8")
+
     print("Anomalias", round(time.time() - t0, 4))
 
     #########################
@@ -113,5 +149,5 @@ def stats():
         contratos_por_empresa=contratos_por_empresa,
         contratos_por_empresa_fig=contratos_empresa_html,
         anomalias=[],
-        anomalias_fig=""
+        anomalias_fig=anomalias_html
     )
