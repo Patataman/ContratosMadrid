@@ -35,12 +35,33 @@ def company_by_slug(slug, auth, sandbox=""):
     return req["company"]
 
 
-def find_company_offshore(company):
-    pass
+def find_company_offshore(mongo, company_slug):
+    name = company_slug.split("-")
+    match_offshore = [k for k in mongo.find_match_offshore(company_slug)]
+    if len(match_offshore) > 0:
+        for m in match_offshore[:]:
+            m['names'] = m['names'].lower().split(" ")
+            for palabra in name:
+                palabra = palabra.lower()
+                if palabra in m['names']:
+                    # Para nombres como Johnson & Johnson que no haga match con
+                    # Johnson manolete
+                    m['names'].pop(m['names'].index(palabra))
+        for m in match_offshore:
+            if len(m['names']) == 0:
+                return True
+            elif len(m['names']) == 1 and "sl" in m['names']:
+                # Como es posible que los nombres no vengan con el "sl", pues lo "ignoramos"
+                return True
 
 
-def find_person_offshore(person):
-    pass
+def find_person_offshore(mongo, person_slug):
+    match_offshore = [k for k in mongo.find_match_offshore(person_slug)]
+    if len(match_offshore) > 0 and \
+       any([len(person_slug) == m['names'] for m in match_offshore]):
+        return True
+    else:
+        return False
 
 
 def format_person_slug(name):
@@ -68,7 +89,7 @@ def librebor_find_data(
 
     iterations += 1
 
-    offshore = False #find_company_offshore(company["name"])
+    offshore = find_company_offshore(mongo, company["slug"])
 
     output = {
         "type": "company",
@@ -95,9 +116,12 @@ def librebor_find_data(
             )
         elif position["type"] == "Person" and not visited.issuperset({position["slug_person"]}):
             visited.add(position["slug_person"])
-            #offshore = find_person_offshore(position["name_person"])
-            electoral = mongo.get_party_by_name(format_person_slug(position["slug_person"]))
-            if electoral != list([]):
+
+            offshore = find_person_offshore(mongo, position["slug_person"])
+
+            electoral = list(mongo.get_party_by_name(format_person_slug(position["slug_person"])))
+
+            if len(electoral) > 0:
                 electoral = electoral[0]["partido"]
             else:
                 electoral = None

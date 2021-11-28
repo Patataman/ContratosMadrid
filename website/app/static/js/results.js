@@ -5,7 +5,8 @@ function generate_electoral_list_match(contrato_id, data) {
     let lista = "";
     for (d of data) {
         if (d.type == "person" && d.electoral_list != "") {
-            lista += `<li><i class="fa fa-id-card" aria-hidden="true"></i>${d.name}
+            lista += `<li><div><i class="fa fa-id-card" aria-hidden="true"></i>
+                <span class="m-1">${d.name}</span></div>
                 <small class="text-muted">${d.electoral_lists}</small></li>`;
         }
     }
@@ -25,11 +26,11 @@ function generate_offshore_match(contrato_id, data) {
     for (d of data) {
         if (d.panama_papers) {
             if (d.type == "person")
-                lista += "<li><i class='fa fa-id-card' aria-hidden='true'></i>";
+                lista += "<li><div><i class='fa fa-id-card' aria-hidden='true'></i>";
             else
-                lista += "<li><i class='fa fa-building' aria-hidden='true'></i>";
+                lista += "<li><div><i class='fa fa-building' aria-hidden='true'></i>";
 
-            lista += d.name;
+            lista += "<span class='m-1'>"+d.name+"</span></div>";
             lista += `<small class='text-muted'>Panama Papers
                 <a href='https://es.wikipedia.org/wiki/Panama_Papers' target='_blank'>
                     <i class='fa fa-external-link' aria-hidden='true'></i>
@@ -62,9 +63,10 @@ $(document).ready(function() {
             },
             error: function(resp) {
                 generate_messages("Ha ocurrido un error interno. Recarga y vuelve a intentar", "warning");
+            },
+            complete: function() {
+                $(this).removeClass("need-search");
             }
-        }).always(function() {
-            $(this).removeClass("need-search");
         });
     });
 });

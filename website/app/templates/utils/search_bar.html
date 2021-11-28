@@ -1,6 +1,6 @@
 <form id="search-form" method="POST" action="/results" class="col-5">
     <div class="input-group mb-3">
-        <input type="text" class="form-control" placeholder="Introduce tu búsqueda" name="busqueda"
+        <input type="text" class="form-control" placeholder="Introduce tu búsqueda" name="busqueda" minlength="4"
             aria-label="Introduce tu búsqueda" aria-describedby="basic-addon2" {% if busqueda %} value="{{ busqueda }}" {% endif %}>
         <div class="input-group-append">
             <button class="btn btn-outline-secondary" type="submit" id="search-button"><i class="fa fa-search"></i></span>

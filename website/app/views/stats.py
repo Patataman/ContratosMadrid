@@ -114,7 +114,9 @@ def stats():
 
     anomalias = {
         "Limpio": contratos_por_cat['total'] - comprometido,
-        "Comprometido": comprometido
+        "En listas electorales": comprometido,
+        "En papeles offshore": []
+
     }
 
     anomalias_fig = go.Figure(

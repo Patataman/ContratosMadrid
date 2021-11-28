@@ -5,6 +5,7 @@ from flask import (
     request, jsonify, current_app as app, url_for, abort, redirect
 )
 
+import math
 import json
 import locale
 import requests
@@ -82,17 +83,32 @@ def index():
 
 
 @main_module.route('/results', methods=['POST'])
-def results():
+def results_post():
     """ Aquí se llega desde el index al realizar una búsqueda.
         Se muestra el listado de contrataciones
 
         REFERENCIA DE QUÉ NECESITO EN EL FRONT: https://github.com/Patataman/DMyE1/issues/10
     """
     busqueda = request.form['busqueda']
+    return redirect(url_for('.results_get', busqueda=busqueda))
+
+@main_module.route('/results/<busqueda>', methods=['GET'])
+def results_get(busqueda: str):
+    pag_size = 10
+    pagina = int(request.args.get("pag", 1))
+
     t0 = time.time()
-    search = list(app.mongo.get_contracts_by_title(busqueda).limit(50))
+    mongo_search = app.mongo.get_contracts_by_title(busqueda)
+    count = mongo_search.count()
+    search = list(mongo_search.skip(pag_size*(pagina-1)).limit(pag_size))
     tiempo = time.time() - t0
-    return render_template('results.html', busqueda=busqueda, contratos=search, tiempo=tiempo)
+
+    return render_template(
+        'results.html', busqueda=busqueda,
+        contratos=search, count=count, tiempo=tiempo,
+        current_pag=pagina, max_pag=math.ceil(count/pag_size),
+        pag_size=pag_size
+    )
 
 
 @main_module.route('/query', methods=['GET'])
@@ -112,7 +128,10 @@ def query():
     slug = request.args.get('nif')
     contract_id = request.args.get('contract')
 
-    visited, results, iterations = librebor_find_data(app.mongo, True, slug, auth)
+    try:
+        visited, results, iterations = librebor_find_data(app.mongo, True, slug, auth)
+    except Exception as e:
+        return jsonify([])
 
     if not VERBOSE:
         res = list()

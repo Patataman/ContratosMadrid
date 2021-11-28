@@ -145,6 +145,18 @@ class MongoDB:
     def get_all_offshore_papers(self):
         return self.database[OFFSHORE_COLLECTION].find({})
 
+    def find_match_offshore(self, query_name, split="-"):
+        name = query_name.split(split)
+        query = [{"$unwind": "$names"}]
+        for n in name:
+            query.append({
+                "$match": {
+                    'names': {'$regex': f".*{n}.*", '$options': 'i'}
+                }
+            })
+        return self.database[OFFSHORE_COLLECTION].aggregate(query)
+
+
     def __insert_jsons(self, collection, path):
         if not os.path.exists(path): return
         files = filter(lambda x: '.json' in x, next(os.walk(path))[2])

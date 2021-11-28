@@ -64,15 +64,17 @@
                             <p class="mt-2">
                             {% if contrato.adjudicacion %}
                                 {% if contrato.librebor is defined %}
-                                  {% set listas = 0 %}
+                                  {% set ns = namespace(listas=0)%}
                                   {% if contrato.librebor|length > 0 %}
                                     <ul>
                                     {% for persona in contrato.librebor %}
                                       {% if persona.type == "person" and persona.electoral_lists %}
-                                        {% set listas = listas + 1 %}
+                                        {% set ns.listas = ns.listas + 1 %}
                                         <li>
-                                            <i class="fa fa-id-card" aria-hidden="true"></i>
-                                            {{ persona.name }}
+                                            <div>
+                                                <i class="fa fa-id-card" aria-hidden="true"></i>
+                                                <span class="m-1">{{ persona.name }}</span>
+                                            </div>
                                             <small class="text-muted">
                                                 {{ persona.electoral_lists }}
                                             </small>
@@ -81,7 +83,7 @@
                                     {% endfor %}
                                     </ul>
                                   {% endif %}
-                                  {% if listas == 0 %}
+                                  {% if ns.listas == 0 %}
                                     No se encontraron coincidencias
                                   {% endif %}
                                 {% else %}
@@ -103,18 +105,20 @@
                             {% if contrato.adjudicacion %}
                               {% if contrato.librebor is defined %}
                                 {% if contrato.librebor|length > 0 %}
-                                  {% set offshore = 0 %}
+                                  {% set ns = namespace(offshore=0)%}
                                   <ul>
                                   {% for entidad in contrato.librebor %}
                                     {% if entidad.panama_papers %}
-                                      {% set offshore = offshore + 1 %}
+                                      {% set ns.offshore = ns.offshore + 1 %}
                                       <li>
-                                        {% if entidad.type == "person" %}
-                                          <i class="fa fa-id-card" aria-hidden="true"></i>
-                                        {% else %}
-                                          <i class="fa fa-building" aria-hidden="true"></i>
-                                        {% endif %}
-                                          {{ entidad.name }}
+                                          <div>
+                                          {% if entidad.type == "person" %}
+                                            <i class="fa fa-id-card" aria-hidden="true"></i>
+                                          {% else %}
+                                            <i class="fa fa-building" aria-hidden="true"></i>
+                                          {% endif %}
+                                            <span class="m-1">{{ entidad.name }}</span>
+                                          </div>
                                           <small class="text-muted">Panama Papers
                                               <a href="https://es.wikipedia.org/wiki/Panama_Papers" target="_blank">
                                                   <i class="fa fa-external-link" aria-hidden="true"></i>
@@ -125,7 +129,7 @@
                                   {% endfor %}
                                   </ul>
                                 {% endif %}
-                                {% if offshore == 0 %}
+                                {% if ns.offshore == 0 %}
                                   No se encontraron coincidencias
                                 {% endif %}
                               {% else %}

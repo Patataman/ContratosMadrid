@@ -12,11 +12,52 @@
 
     <section class="col-12">
         <div class="col-12 mb-4 p-4 row border-bottom">
-            <div class="col-3 offset-3">Contratos encontrados: {{ contratos|length }}</div>
+            <div class="col-3 offset-3">Contratos encontrados: {{ count }}</div>
             <div class="col-3">Tiempo total: {{ tiempo|round(2) }}s</div>
         </div>
         <div class="col-6 offset-3 mt-2">
-          {% for contrato in contratos[:20] %}
+            <div id="pagination" class="sticky-top nav justify-content-center align-items-center pt-2">
+                <ul class="pagination">
+                    {% set ns = namespace(puntos_pre=False, puntos_sig=False) %}
+                    {% for i in range(1, max_pag) %}
+                      {% if current_pag > 1 and loop.first %}
+                        <li class="page-item">
+                            <a class="page-link" href="?pag=1">Primera</a>
+                        </li>
+                      {% endif %}
+                      {% if i == current_pag %}
+                        <li class="page-item active">
+                            <span class="page-link">{{ i }}</span>
+                        </li>
+                      {% elif max_pag >= pag_size and i < current_pag-3 %}
+                        {% if not ns.puntos_pre%}
+                          {% if i < current_pag-3 or current_pag <= i-3 %} {% set ns.puntos_pre = True %} {% endif %}
+                        <li class="page-item">
+                            <span class="page-link">...</span>
+                        </li>
+                        {% endif %}
+                      {% elif max_pag >= pag_size and i > current_pag+3 %}
+                        {% if not ns.puntos_sig %}
+                          {% if i > current_pag-3 %} {% set ns.puntos_sig = True %} {% endif %}
+                        <li class="page-item">
+                            <span class="page-link">...</span>
+                        </li>
+                        {% endif %}
+                      {% elif max_pag < pag_size or i > current_pag-3 or i < current_pag + 3 %}
+                        {# Para ir a la siguiente página #}
+                        <li class="page-item">
+                            <a class="page-link" href="?pag={{i}}">{{ i }}</a>
+                        </li>
+                      {% endif %}
+                      {% if current_pag != max_pag-1 and loop.last %}
+                        <li class="page-item">
+                            <a class="page-link" href="?pag={{max_pag-1}}">Última</a>
+                        </li>
+                      {% endif %}
+                    {% endfor %}
+                </ul>
+            </div>
+          {% for contrato in contratos %}
             <div class="card border-dark mb-3 p-4 pointer {% if contrato.adjudicacion and contrato.librebor is not defined %} need-search {% endif %}"
                 data-bs-toggle="modal" data-bs-target="#contratoModal{{ contrato._id }}" contract-id="{{ contrato._id }}"
                 {% if contrato.adjudicacion %} contract-nif="{{ contrato.adjudicacion['nif adjudicatario'] }}" {% endif %} >
