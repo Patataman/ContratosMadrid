@@ -129,7 +129,7 @@ def query():
     contract_id = request.args.get('contract')
 
     try:
-        visited, results, iterations = librebor_find_data(app.mongo, True, slug, auth)
+        visited, results, iterations = librebor_find_data(app.mongo, True, slug, auth, visited=set(), results=[])
     except Exception as e:
         return jsonify([])
 
